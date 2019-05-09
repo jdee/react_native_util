@@ -15,7 +15,11 @@ module ReactNativeConvert
         c.description = 'More to come'
 
         c.action do
-          Converter.new.convert_to_react_pod
+          begin
+            Converter.new.convert_to_react_pod!
+          rescue ConversionError => e
+            say "Conversion failed: #{e.message}"
+          end
         end
       end
 

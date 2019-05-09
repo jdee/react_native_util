@@ -1,15 +1,8 @@
 require 'colored'
 require_relative 'core_ext/io'
+require_relative 'exceptions'
 
 module ReactNativeConvert
-  # Base class for exceptions from this gem
-  class ReactNativeConvertException < RuntimeError
-  end
-
-  # Exception raised when command execution fails
-  class ExecutionError < ReactNativeConvertException
-  end
-
   # Module with utility methods
   module Util
     # Execute the specified command. If output is non-nil, generate a log
