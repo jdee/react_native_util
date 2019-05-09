@@ -1,3 +1,4 @@
+# Conversion tools for React Native projects
 module ReactNativeConvert
   NAME = 'react_native_convert'
   VERSION = '0.1.0'

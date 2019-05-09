@@ -5,6 +5,7 @@ require_relative 'exceptions'
 module ReactNativeConvert
   # Module with utility methods
   module Util
+    # [TTY::Platform] Object with platform information
     attr_reader :platform
 
     # Execute the specified command. If output is non-nil, generate a log

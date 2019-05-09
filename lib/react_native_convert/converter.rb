@@ -4,11 +4,17 @@ require 'xcodeproj'
 require_relative 'util'
 
 module ReactNativeConvert
+  # Class to perform conversion operations.
   class Converter
     include Util
 
+    # [Hash] Contents of ./package.json
     attr_reader :package_json
+
+    # [String] Full path to Xcode project
     attr_reader :xcodeproj_path
+
+    # [Xcodeproj::Project] Contents of the project at xcodproj_path
     attr_reader :xcodeproj
 
     # Convert project to use React pod
