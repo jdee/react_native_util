@@ -5,12 +5,12 @@ module ReactNativeConvert
     include Commander::Methods
 
     def run
-      program :name, 'React Native conversion tools'
+      program :name, SUMMARY
       program :version, VERSION
-      program :description, 'More to come'
+      program :description, DESCRIPTION
 
       command :react_pod do |c|
-        c.syntax = 'react_native_convert react_pod'
+        c.syntax = "#{NAME} react_pod"
         c.summary = 'Convert a React Native app to use the React pod from node_modules.'
         c.description = 'More to come'
 
