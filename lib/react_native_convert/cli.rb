@@ -1,4 +1,6 @@
 require 'commander'
+require_relative 'converter'
+require_relative 'metadata'
 
 module ReactNativeConvert
   class CLI

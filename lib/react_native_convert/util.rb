@@ -5,6 +5,8 @@ require_relative 'exceptions'
 module ReactNativeConvert
   # Module with utility methods
   module Util
+    attr_reader :platform
+
     # Execute the specified command. If output is non-nil, generate a log
     # at that location. Main log (open) is log.
     #
@@ -45,6 +47,14 @@ module ReactNativeConvert
       return default_value.to_f if value.nil?
 
       value.to_f
+    end
+
+    # Convenience method to determine if running on a Mac.
+    # @return true if running on a Mac
+    # @return false otherwise
+    def mac?
+      @platform ||= TTY::Platform.new
+      @platform.mac?
     end
   end
 end

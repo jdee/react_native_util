@@ -1,4 +1,5 @@
 require 'json'
+require 'tty/platform'
 require 'xcodeproj'
 require_relative 'util'
 
@@ -13,6 +14,8 @@ module ReactNativeConvert
     # Convert project to use React pod
     # @raise ConversionError on failure
     def convert_to_react_pod!
+      raise ConversionError, "macOS required." unless mac?
+
       load_package_json!
       say 'package.json:'
       say " app name: #{package_json['name'].inspect}"
