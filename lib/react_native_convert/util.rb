@@ -1,5 +1,5 @@
 require 'colored'
-require_relative File.join('core_ext', 'io')
+require_relative 'core_ext/io'
 
 module ReactNativeConvert
   # Base class for exceptions from this gem
