@@ -1,3 +1,5 @@
 #!/usr/bin/env ruby
 
-puts 'To be implemented'
+require 'react_native_convert'
+
+ReactNativeConvert::CLI.new.run
