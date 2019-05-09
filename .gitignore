@@ -1,0 +1,12 @@
+*.gem
+Gemfile.lock
+
+## Documentation cache and generated files:
+/.yardoc/
+/_yardoc/
+/doc/
+
+coverage
+test-results
+build
+report.txt
