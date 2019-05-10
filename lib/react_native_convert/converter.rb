@@ -255,7 +255,7 @@ module ReactNativeConvert
     end
 
     def packager_script
-      react_project!.targets.first.build_phases.find { |p| p.name =~ /packager/i }.shell_script
+      react_project!.targets.first.build_phases.find { |p| p.name =~ /packager/i }.shell_script.gsub(%r{../scripts}, '../node_modules/react-native/scripts')
     rescue Errno::ENOENT
       log 'Could not open React.xcodeproj'
       nil
