@@ -68,6 +68,11 @@ module ReactNativeUtil
       load_xcodeproj!
       log "Found Xcode project at #{xcodeproj_path}"
 
+      if libraries_group.nil?
+        log "Libraries group not found in #{xcodeproj_path}. No conversion necessary."
+        exit 0
+      end
+
       # 2. Detect native dependencies in Libraries group.
       log 'Dependencies:'
       dependencies.each { |d| log " #{d}" }
@@ -93,7 +98,7 @@ module ReactNativeUtil
       xcodeproj.save
 
       # 5. Generate boilerplate Podfile.
-      # TODO: Determine appropriate subspecs
+      # TODO: Determine appropriate subspecs from contents of Libraries group
       generate_podfile!
 
       # 6. Run react-native link for each dependency.
