@@ -1,5 +1,6 @@
 require 'colored'
 require_relative 'core_ext/io'
+require_relative 'core_ext/regexp'
 require_relative 'exceptions'
 
 module ReactNativeUtil
