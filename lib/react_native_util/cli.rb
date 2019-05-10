@@ -15,7 +15,8 @@ module ReactNativeUtil
       command :react_pod do |c|
         c.syntax = "#{NAME} react_pod [OPTIONS]"
         c.summary = 'Convert a React Native app to use the React pod from node_modules.'
-        c.description = 'More to come'
+        c.description = "[Work in progress] Removes all static libraries built by the Libraries group and adds a generic " \
+          "Podfile.\nResults in a buildable, working project."
 
         c.option '--[no-]repo-update', 'Update the local podspec repo (default: update; env. var. REACT_NATIVE_CONVERT_REPO_UPDATE)'
 
