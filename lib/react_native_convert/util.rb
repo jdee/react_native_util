@@ -57,5 +57,11 @@ module ReactNativeConvert
       @platform ||= TTY::Platform.new
       @platform.mac?
     end
+
+    # Wrapper for STDOUT.log
+    # @param message [#to_s] message to log
+    def log(message)
+      STDOUT.log message
+    end
   end
 end

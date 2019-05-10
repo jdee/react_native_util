@@ -5,6 +5,7 @@ require_relative 'metadata'
 module ReactNativeConvert
   class CLI
     include Commander::Methods
+    include Util
 
     def run
       program :name, SUMMARY
@@ -20,7 +21,7 @@ module ReactNativeConvert
           begin
             Converter.new.convert_to_react_pod!
           rescue ConversionError => e
-            say "Conversion failed: #{e.message}"
+            log "Conversion failed: #{e.message}"
           end
         end
       end

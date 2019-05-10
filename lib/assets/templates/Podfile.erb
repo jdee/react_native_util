@@ -1,0 +1,32 @@
+platform :ios, '9.0'
+
+target '<%= app_name %>' do
+  pod 'React',
+    path: '../node_modules/react-native',
+    subspecs: %w[
+      Core
+      CxxBridge
+      DevSupport
+      RCTActionSheet
+      RCTAnimation
+      RCTBlob
+      RCTGeolocation
+      RCTImage
+      RCTLinkingIOS
+      RCTNetwork
+      RCTSettings
+      RCTText
+      RCTVibration
+      RCTWebSocket
+    ]
+  pod 'yoga', path: '../node_modules/react-native/ReactCommon/yoga'
+  pod 'Folly', podspec: '../node_modules/react-native/third-party-podspecs/Folly.podspec'
+end
+
+<% if test_target %>
+target '<%= test_target.name %>' do
+  pod 'React', path: '../node_modules/react-native', subspecs: %w[Core CxxBridge]
+  pod 'yoga', path: '../node_modules/react-native/ReactCommon/yoga'
+  pod 'Folly', podspec: '../node_modules/react-native/third-party-podspecs/Folly.podspec'
+end
+<% end %>
