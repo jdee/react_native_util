@@ -245,6 +245,8 @@ module ReactNativeConvert
       target = xcodeproj.targets.find { |t| t.name == app_name }
       phase = target.new_shell_script_build_phase 'Start Packager'
       phase.shell_script = packager_script
+
+      # TODO: Move this build phase to the top of the list before the pod install.
     end
 
     def react_project!
