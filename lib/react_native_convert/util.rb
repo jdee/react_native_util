@@ -12,14 +12,16 @@ module ReactNativeConvert
     # at that location. Main log (open) is log.
     #
     # @param command Variadic command to be executed
+    # @param chdir [String, nil] Directory in which to execute the command
     # @param output [String, Symbol, IO] Output for command (path, IO or a symbol such as :close)
     # @param log [IO, nil] Open IO for main log (nil to suppress logging command to main log)
     # @return nil
     # @raise ExecutionError If the command fails
-    def execute(*command, output: STDOUT, log: STDOUT)
+    def execute(*command, chdir: nil, output: STDOUT, log: STDOUT)
       log.log_command command unless log.nil?
 
-      system(*command, %i[err out] => output)
+      options = chdir.nil? ? {} : { chdir: chdir }
+      system(*command, options.merge(%i[err out] => output))
 
       raise ExecutionError unless $?.success?
 

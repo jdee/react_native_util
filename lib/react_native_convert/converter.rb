@@ -87,9 +87,7 @@ module ReactNativeConvert
       end
 
       # 7. pod install
-      Dir.chdir 'ios' do
-        execute 'pod', 'install', '--silent'
-      end
+      execute 'pod', 'install', '--silent', chdir: 'ios'
 
       # 8. SCM/git (add, commit - optional)
 
