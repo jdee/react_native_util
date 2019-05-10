@@ -4,7 +4,7 @@ require 'tty/platform'
 require 'xcodeproj'
 require_relative 'util'
 
-module ReactNativeConvert
+module ReactNativeUtil
   # Class to perform conversion operations.
   class Converter
     include Util

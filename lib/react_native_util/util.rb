@@ -2,7 +2,7 @@ require 'colored'
 require_relative 'core_ext/io'
 require_relative 'exceptions'
 
-module ReactNativeConvert
+module ReactNativeUtil
   # Module with utility methods
   module Util
     # [TTY::Platform] Object with platform information

@@ -1,5 +1,5 @@
-describe ReactNativeConvert::Util do
-  include ReactNativeConvert::Util
+describe ReactNativeUtil::Util do
+  include ReactNativeUtil::Util
 
   describe '#boolean_env_var?' do
     before :all do

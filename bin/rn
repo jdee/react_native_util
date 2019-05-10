@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require 'react_native_util/cli'
+
+ReactNativeUtil::CLI.new.run

@@ -1,22 +1,22 @@
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require "react_native_convert/metadata"
+require "react_native_util/metadata"
 
 Gem::Specification.new do |spec|
-  spec.name          = ReactNativeConvert::NAME
-  spec.version       = ReactNativeConvert::VERSION
-  spec.summary       = ReactNativeConvert::SUMMARY
-  spec.description   = ReactNativeConvert::DESCRIPTION
+  spec.name          = ReactNativeUtil::NAME
+  spec.version       = ReactNativeUtil::VERSION
+  spec.summary       = ReactNativeUtil::SUMMARY
+  spec.description   = ReactNativeUtil::DESCRIPTION
   spec.authors       = ['Jimmy Dee']
   spec.email         = ['jgvdthree@gmail.com']
-  spec.homepage      = "https://github.com/jdee/#{ReactNativeConvert::NAME}"
+  spec.homepage      = "https://github.com/jdee/#{ReactNativeUtil::NAME}"
 
   spec.files         = Dir['bin/*', 'lib/**/*'] + %w{README.md LICENSE}
   spec.test_files    = spec.files.grep(/_spec/)
 
   spec.require_paths = ['lib']
   spec.bindir        = 'bin'
-  spec.executables   = [ReactNativeConvert::NAME]
+  spec.executables   = [ReactNativeUtil::NAME, 'rn']
 
   spec.license       = 'MIT'
 

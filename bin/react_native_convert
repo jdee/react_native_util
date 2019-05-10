@@ -1,5 +1,0 @@
-#!/usr/bin/env ruby
-
-require 'react_native_convert/cli'
-
-ReactNativeConvert::CLI.new.run

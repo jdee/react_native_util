@@ -2,7 +2,7 @@ require 'commander'
 require_relative 'converter'
 require_relative 'metadata'
 
-module ReactNativeConvert
+module ReactNativeUtil
   class CLI
     include Commander::Methods
     include Util
