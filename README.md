@@ -14,7 +14,7 @@ Community utility CLI for React Native projects.
 _macOS required_
 
 ```bash
-brew install yarn
+brew install yarn # Not necessary if installing from Homebrew tap
 npm install -g react-native-cli
 ```
 
@@ -27,8 +27,7 @@ npm install -g react-native-cli
 ## Install from Homebrew tap
 
 ```bash
-brew tap jdee/tap
-brew install react_native_util
+brew install jdee/tap/react_native_util
 ```
 
 ## Gemfile
