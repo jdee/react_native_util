@@ -9,6 +9,15 @@
 
 Community utility CLI for React Native projects.
 
+## Prerequisites
+
+_macOS required_
+
+```bash
+brew install yarn
+npm install -g react-native-cli
+```
+
 ## Installation
 
 ```bash
