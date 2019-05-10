@@ -42,6 +42,9 @@ module ReactNativeConvert
     def convert_to_react_pod!
       raise ConversionError, "macOS required." unless mac?
 
+      # Make sure no uncommitted changes
+      check_repo_status!
+
       load_package_json!
       log 'package.json:'
       log " app name: #{app_name.inspect}"
@@ -201,6 +204,24 @@ module ReactNativeConvert
       File.open 'ios/Podfile', 'w' do |file|
         file.write podfile_contents
       end
+    end
+
+    def check_repo_status!
+      # If the git command is not installed, there's not much we can do.
+      # Don't want to use verify_git here, which will insist on installing
+      # the command. The logic of that method could change.
+      return if `which git`.empty?
+
+      unless Dir.exist? ".git"
+        `git rev-parse --git-dir > /dev/null 2>&1`
+        # Not a git repo
+        return unless $?.success?
+      end
+
+      `git diff-index --quiet HEAD --`
+      return if $?.success?
+
+      raise ConversionError, 'Uncommitted changes in repo. Please commit or stash before continuing.'
     end
   end
 end
