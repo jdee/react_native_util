@@ -37,6 +37,17 @@ module ReactNativeConvert
     # [Xcodeproj::Project] Contents of the project at xcodproj_path
     attr_reader :xcodeproj
 
+    attr_reader :options
+
+    def initialize(repo_update: nil)
+      @options = {}
+      if repo_update.nil?
+        @options[:repo_update] = boolean_env_var?(:REACT_NATIVE_CONVERT_REPO_UPDATE, default_value: true)
+      else
+        @options[:repo_update] = repo_update
+      end
+    end
+
     # Convert project to use React pod
     # @raise ConversionError on failure
     def convert_to_react_pod!
@@ -90,7 +101,9 @@ module ReactNativeConvert
       end
 
       # 7. pod install
-      execute 'pod', 'install', '--silent', chdir: 'ios'
+      command = %w[pod install --silent]
+      command << '--repo-update' if options[:repo_update]
+      execute(*command, chdir: 'ios')
 
       # 8. SCM/git (add, commit - optional)
 
