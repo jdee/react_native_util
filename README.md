@@ -13,8 +13,6 @@ Community utility CLI for React Native projects.
 
 ```bash
 [sudo] gem install react_native_util
-react_native_util -h
-rn -h
 ```
 
 ## Install from Homebrew tap
@@ -28,6 +26,14 @@ brew install react_native_util
 
 ```Ruby
 gem 'react_native_util'
+```
+
+## Usage
+
+```bash
+react_native_util -h
+rn -h
+rn react_pod -h
 ```
 
 ## Try it out

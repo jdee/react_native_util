@@ -133,9 +133,8 @@ module ReactNativeUtil
       raise ConversionError, "Failed to load #{xcodeproj_path}: #{e.message}"
     end
 
-    # A list, usually of PBXFileReferences, of children of the
-    # Libraries group from the xcodeproj.
-    # @return [Array] an array of child references
+    # A representation of the Libraries group (if any) from the Xcode project.
+    # @return the Libraries group
     def libraries_group
       xcodeproj['Libraries']
     end
