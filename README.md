@@ -17,6 +17,13 @@ react_native_util -h
 rn -h
 ```
 
+## Install from Homebrew tap
+
+```bash
+brew tap jdee/tap
+brew install react_native_util
+```
+
 ## Gemfile
 
 ```Ruby
