@@ -13,7 +13,7 @@ module ReactNativeConvert
       program :description, DESCRIPTION
 
       command :react_pod do |c|
-        c.syntax = "#{NAME} react_pod"
+        c.syntax = "#{NAME} react_pod [OPTIONS]"
         c.summary = 'Convert a React Native app to use the React pod from node_modules.'
         c.description = 'More to come'
 
