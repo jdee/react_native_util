@@ -7,7 +7,9 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-       - image: circleci/ruby:2.6.1
+      # 2.3.7 is the system Ruby on macOS Mojave.
+      # 2.3.3 was the system Ruby on macOS High Sierra.
+       - image: circleci/ruby:2.3.7
 
     working_directory: ~/repo
 
