@@ -20,3 +20,22 @@ react_native_convert -h
 ```Ruby
 gem 'react_native_convert', git: 'https://github.com/jdee/react_native_convert'
 ```
+
+## Try it out
+
+First set up a test app:
+```bash
+react-native init TestApp
+cd TestApp
+yarn add react-native-webview
+react-native link react-native-webview
+git init .
+git add .
+git commit -m'Before conversion'
+```
+
+Now do the conversion:
+```bash
+react_native_convert react_pod
+git status
+```
