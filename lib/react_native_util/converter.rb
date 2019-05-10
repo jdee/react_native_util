@@ -42,7 +42,7 @@ module ReactNativeUtil
     def initialize(repo_update: nil)
       @options = {}
       if repo_update.nil?
-        @options[:repo_update] = boolean_env_var?(:REACT_NATIVE_CONVERT_REPO_UPDATE, default_value: true)
+        @options[:repo_update] = boolean_env_var?(:REACT_NATIVE_UTIL_REPO_UPDATE, default_value: true)
       else
         @options[:repo_update] = repo_update
       end
@@ -243,7 +243,7 @@ module ReactNativeUtil
 
       target = xcodeproj.targets.find { |t| t.name == app_name }
       phase = target.new_shell_script_build_phase 'Start Packager'
-      phase.shell_script = packager_script
+      phase.shell_script = script
 
       # TODO: Move this build phase to the top of the list before the pod install.
     end
@@ -258,7 +258,10 @@ module ReactNativeUtil
     def packager_script
       react_project!.targets.first.build_phases.find { |p| p.name =~ /packager/i }.shell_script.gsub(%r{../scripts}, '../node_modules/react-native/scripts')
     rescue Errno::ENOENT
-      log 'Could not open React.xcodeproj'
+      log 'Could not open React.xcodeproj. File not found.'
+      nil
+    rescue Xcodeproj::PlainInformative => e
+      log "Could not open React.xcodeproj. #{e.message}"
       nil
     end
   end
