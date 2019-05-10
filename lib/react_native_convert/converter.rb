@@ -83,16 +83,17 @@ module ReactNativeConvert
       # reload after react-native unlink
       load_xcodeproj!
 
-      # 4. Remove Libraries group from Xcode project.
-      remove_libraries_group_from_project!
-
       # 4a. TODO: Add Start Packager script
+      validate_app_target!
+      add_packager_script
+
+      # 4b. Remove Libraries group from Xcode project.
+      remove_libraries_group_from_project!
 
       xcodeproj.save
 
       # 5. Generate boilerplate Podfile.
       # TODO: Determine appropriate subspecs
-      validate_app_target!
       generate_podfile!
 
       # 6. Run react-native link for each dependency.
@@ -235,6 +236,29 @@ module ReactNativeConvert
       return if $?.success?
 
       raise ConversionError, 'Uncommitted changes in repo. Please commit or stash before continuing.'
+    end
+
+    def add_packager_script
+      script = packager_script
+      return unless script
+
+      target = xcodeproj.targets.find { |t| t.name == app_name }
+      phase = target.new_shell_script_build_phase 'Start Packager'
+      phase.shell_script = packager_script
+    end
+
+    def react_project!
+      return @react_project if @react_project
+
+      path = libraries_group.children.find { |c| c.path =~ /React.xcodeproj/ }.real_path
+      @react_project = Xcodeproj::Project.open path
+    end
+
+    def packager_script
+      react_project!.targets.first.build_phases.find { |p| p.name =~ /packager/i }.shell_script
+    rescue Errno::ENOENT
+      log 'Could not open React.xcodeproj'
+      nil
     end
   end
 end
