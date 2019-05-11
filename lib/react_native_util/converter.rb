@@ -60,9 +60,6 @@ module ReactNativeUtil
       log 'package.json:'
       log " app name: #{app_name.inspect}"
 
-      log 'Installing NPM dependencies with yarn'
-      execute 'yarn'
-
       # 1. Detect project. TODO: Add an option to override.
       @xcodeproj_path = File.expand_path "ios/#{package_json['name']}.xcodeproj"
       load_xcodeproj!
@@ -72,6 +69,10 @@ module ReactNativeUtil
         log "Libraries group not found in #{xcodeproj_path}. No conversion necessary."
         exit 0
       end
+
+      # Don't run yarn until we're sure we're proceeding,
+      log 'Installing NPM dependencies with yarn'
+      execute 'yarn'
 
       # 2. Detect native dependencies in Libraries group.
       log 'Dependencies:'
