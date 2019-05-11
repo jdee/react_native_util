@@ -88,7 +88,7 @@ module ReactNativeUtil
       # reload after react-native unlink
       load_xcodeproj!
 
-      # 4a. TODO: Add Start Packager script
+      # 4a. Add Start Packager script
       validate_app_target!
       add_packager_script
 
