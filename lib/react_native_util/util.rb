@@ -1,4 +1,5 @@
 require 'colored'
+require 'tty/spinner'
 require_relative 'core_ext/io'
 require_relative 'core_ext/regexp'
 require_relative 'exceptions'
@@ -8,6 +9,25 @@ module ReactNativeUtil
   module Util
     # [TTY::Platform] Object with platform information
     attr_reader :platform
+
+    # Executes a command with no output to the terminal. A spinner is displayed
+    # instead. Output may be directed to a file.
+    # @param command Variadic command to be executed
+    # @param log [String, Symbol, nil] Output for command (path, IO or a symbol such as :close)
+    # @param chdir [String, nil] Directory in which to execute the command
+    # @raise ExecutionError on failure
+    def run_command_with_spinner!(*command, log: nil, chdir: nil)
+      STDOUT.flush
+      STDERR.flush
+      spinner = TTY::Spinner.new "[:spinner] #{command.shelljoin}", format: :flip
+      spinner.auto_spin
+      execute(*command, log: nil, output: log, chdir: chdir)
+      spinner.success 'success'
+    rescue ExecutionError
+      spinner.error 'failure'
+      STDOUT.log "See #{log} for details." if log && log.kind_of?(String)
+      raise
+    end
 
     # Execute the specified command. If output is non-nil, generate a log
     # at that location. Main log (open) is log.
@@ -24,7 +44,7 @@ module ReactNativeUtil
       options = chdir.nil? ? {} : { chdir: chdir }
       system(*command, options.merge(%i[err out] => output))
 
-      raise ExecutionError unless $?.success?
+      raise ExecutionError, "#{command.shelljoin}: #{$?}" unless $?.success?
 
       nil
     end
