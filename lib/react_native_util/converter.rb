@@ -75,6 +75,13 @@ module ReactNativeUtil
         exit 0
       end
 
+      if File.exist? podfile_path
+        log "Podfile already present at #{File.expand_path podfile_path}.".red.bold
+        log "A future release of #{NAME} may support integration with an existing Podfile."
+        log 'This release can only convert apps that do not currently use a Podfile.'
+        exit 1
+      end
+
       # Don't run yarn until we're sure we're proceeding,
       log 'Installing NPM dependencies with yarn'
       execute 'yarn'
@@ -253,10 +260,14 @@ module ReactNativeUtil
       raise ConversionError, "Target #{app_name} is not an application target." unless app_target.product_type == 'com.apple.product-type.application'
     end
 
+    def podfile_path
+      'ios/Podfile'
+    end
+
     # Generate a Podfile from a template.
     def generate_podfile!
       podfile_contents = ERB.new(File.read(PODFILE_TEMPLATE_PATH)).result binding
-      File.open 'ios/Podfile', 'w' do |file|
+      File.open podfile_path, 'w' do |file|
         file.write podfile_contents
       end
     end
