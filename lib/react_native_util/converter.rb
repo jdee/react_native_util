@@ -139,9 +139,6 @@ module ReactNativeUtil
 
       # 9. Open workspace/build
       execute 'open', File.join('ios', "#{app_name}.xcworkspace")
-    rescue ExecutionError => e
-      log e.message.red.bold
-      exit(-1)
     end
 
     # Read the contents of ./package.json into @package_json

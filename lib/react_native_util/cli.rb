@@ -24,8 +24,14 @@ module ReactNativeUtil
           begin
             converter = Converter.new repo_update: opts.repo_update
             converter.convert_to_react_pod!
+            exit 0
+          rescue ExecutionError => e
+            # Generic command failure.
+            log e.message.red.bold
+            exit(-1)
           rescue ConversionError => e
             log "Conversion failed: #{e.message}"
+            exit(-1)
           end
         end
       end
