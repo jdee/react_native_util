@@ -9,17 +9,21 @@ module ReactNativeUtil
   class Converter
     include Util
 
-    # [Array<String>] Default contents of Libraries group
+    # [Array<String>] Xcode projects from react-native that may be in the Libraries group
     DEFAULT_DEPENDENCIES = %w[
-      RCTAnimation
+      ART
       React
       RCTActionSheet
+      RCTAnimation
       RCTBlob
+      RCTCameraRoll
       RCTGeolocation
       RCTImage
       RCTLinking
       RCTNetwork
+      RCTPushNotification
       RCTSettings
+      RCTTest
       RCTText
       RCTVibration
       RCTWebSocket
@@ -75,6 +79,7 @@ module ReactNativeUtil
       log 'Installing NPM dependencies with yarn'
       execute 'yarn'
 
+      # Unused, but should be there and parseable
       load_react_podspec!
 
       # 2. Detect native dependencies in Libraries group.
@@ -105,7 +110,6 @@ module ReactNativeUtil
       xcodeproj.save
 
       # 5. Generate boilerplate Podfile.
-      # TODO: Determine appropriate subspecs from contents of Libraries group
       generate_podfile!
 
       # 6. Run react-native link for each dependency.
@@ -227,7 +231,8 @@ module ReactNativeUtil
       roots = library_roots - %w[React]
       @subspecs_from_libraries = roots.select { |r| DEFAULT_DEPENDENCIES.include?(r) }.map do |root|
         # TODO: Improve this by finding subspecs from the React.podspec
-        # and mapping them to Xcode projects under node_modules/react-native.
+        # and mapping them to Xcode projects under node_modules/react-native?
+        # Maybe this is sufficient for now.
         case root
         when 'RCTLinking'
           'RCTLinkingIOS'
