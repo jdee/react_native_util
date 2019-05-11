@@ -1,5 +1,6 @@
 require 'erb'
 require 'json'
+require 'tmpdir'
 require 'tty/platform'
 require 'xcodeproj'
 require_relative 'util'
@@ -82,9 +83,9 @@ module ReactNativeUtil
         exit 1
       end
 
-      # Don't run yarn until we're sure we're proceeding,
+      # Don't run yarn until we're sure we're proceeding.
       log 'Installing NPM dependencies with yarn'
-      execute 'yarn'
+      run_command_with_spinner 'yarn', log: File.join(Dir.tmpdir, 'yarn.log')
 
       # Unused, but should be there and parseable
       load_react_podspec!
@@ -125,9 +126,9 @@ module ReactNativeUtil
       end
 
       # 7. pod install
-      command = %w[pod install --silent]
+      command = %w[pod install]
       command << '--repo-update' if options[:repo_update]
-      execute(*command, chdir: 'ios')
+      run_command_with_spinner(*command, chdir: 'ios', log: File.join(Dir.tmpdir, 'pod-install.log'))
 
       # 8. SCM/git (add, commit - optional)
 
