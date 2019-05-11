@@ -242,17 +242,38 @@ module ReactNativeUtil
       raise ConversionError, 'Uncommitted changes in repo. Please commit or stash before continuing.'
     end
 
+    # Adds the Start Packager script from the React.xcodeproj under node_modules
+    # to the main application target before deleting React.xcodeproj from the
+    # Libraries group. Adjusts paths in the script to account for the different
+    # project location. If React.xcodeproj cannot be opened, or if the relevant
+    # build phase is not found, a warning is logged, and this step is skipped.
+    #
+    # TODO: The build phase is added after all other build phases. Ideally it
+    # can be moved to the beginning. The packager is independent of the Xcode
+    # build process. It may be started at any time. Starting it early is an
+    # optimization that allows it to load while the build is in progress.
+    # Currently it's possible to simply drag the build phase in Xcode to a
+    # higher position after running the react_pod command.
     def add_packager_script
-      script = packager_script
-      return unless script
+      old_packager_phase = packager_phase_from_react_project
+      unless old_packager_phase
+        log 'Could not find packager build phase in React.xcodeproj. Skipping.'.yellow
+        return
+      end
 
+      # location of project is different relative to packager script
+      script = old_packager_phase.shell_script.gsub(%r{../scripts}, '../node_modules/react-native/scripts')
+
+      # target can't be nil. Already validated earlier by #validate_app_target!
       target = xcodeproj.targets.find { |t| t.name == app_name }
-      phase = target.new_shell_script_build_phase 'Start Packager'
+      phase = target.new_shell_script_build_phase old_packager_phase.name
       phase.shell_script = script
-
-      # TODO: Move this build phase to the top of the list before the pod install.
     end
 
+    # Returns a Project object with the contents of the React.xcodeproj project
+    # from node_modules.
+    # @return [Xcodeproj::Project] a Project object with the contents of React.xcodeproj from node_modules
+    # @raise Xcodeproj::PlainInformative in case of most failures
     def react_project!
       return @react_project if @react_project
 
@@ -260,8 +281,12 @@ module ReactNativeUtil
       @react_project = Xcodeproj::Project.open path
     end
 
-    def packager_script
-      react_project!.targets.first.build_phases.find { |p| p.name =~ /packager/i }.shell_script.gsub(%r{../scripts}, '../node_modules/react-native/scripts')
+    # Returns the original Start Packager build phase from the React.xcodeproj
+    # under node_modules. This contains the original script.
+    # @return the packager build phase if found
+    # @return nil if not found or React.xcodeproj cannot be opened
+    def packager_phase_from_react_project
+      react_project!.targets.first.build_phases.find { |p| p.name =~ /packager/i }
     rescue Errno::ENOENT
       log 'Could not open React.xcodeproj. File not found.'
       nil
