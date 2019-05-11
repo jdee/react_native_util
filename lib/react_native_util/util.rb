@@ -21,10 +21,13 @@ module ReactNativeUtil
       STDERR.flush
       spinner = TTY::Spinner.new "[:spinner] #{command.shelljoin}", format: :flip
       spinner.auto_spin
+      start_time = Time.now
       execute(*command, log: nil, output: log, chdir: chdir)
-      spinner.success 'success'
+      elapsed = Time.now - start_time
+      spinner.success "success in #{format('%.1f', elapsed)} s"
     rescue ExecutionError
-      spinner.error 'failure'
+      elapsed = Time.now - start_time
+      spinner.error "failure in #{format('%.1f', elapsed)} s"
       STDOUT.log "See #{log} for details." if log && log.kind_of?(String)
       raise
     end
