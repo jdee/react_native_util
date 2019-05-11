@@ -15,17 +15,18 @@ module ReactNativeUtil
     # @param command Variadic command to be executed
     # @param log [String, Symbol, nil] Output for command (path, IO or a symbol such as :close)
     # @param chdir [String, nil] Directory in which to execute the command
-    def run_command_with_spinner(*command, log: nil, chdir: nil)
+    # @raise ExecutionError on failure
+    def run_command_with_spinner!(*command, log: nil, chdir: nil)
       STDOUT.flush
       STDERR.flush
       spinner = TTY::Spinner.new "[:spinner] #{command.shelljoin}", format: :flip
       spinner.auto_spin
       execute(*command, log: nil, output: log, chdir: chdir)
-      spinner.success '✅'
-    rescue ExecutionError => e
-      spinner.error e.message
-      STDOUT.log "See #{log} for details." if log
-      exit(-1)
+      spinner.success 'success'
+    rescue ExecutionError
+      spinner.error 'failure'
+      STDOUT.log "See #{log} for details." if log && log.kind_of?(String)
+      raise
     end
 
     # Execute the specified command. If output is non-nil, generate a log
@@ -43,7 +44,7 @@ module ReactNativeUtil
       options = chdir.nil? ? {} : { chdir: chdir }
       system(*command, options.merge(%i[err out] => output))
 
-      raise ExecutionError unless $?.success?
+      raise ExecutionError, "#{command.shelljoin}: #{$?}" unless $?.success?
 
       nil
     end

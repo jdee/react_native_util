@@ -85,7 +85,7 @@ module ReactNativeUtil
 
       # Don't run yarn until we're sure we're proceeding.
       log 'Installing NPM dependencies with yarn'
-      run_command_with_spinner 'yarn', log: File.join(Dir.tmpdir, 'yarn.log')
+      run_command_with_spinner! 'yarn', log: File.join(Dir.tmpdir, 'yarn.log')
 
       # Unused, but should be there and parseable
       load_react_podspec!
@@ -98,8 +98,9 @@ module ReactNativeUtil
       deps_to_add = dependencies
 
       # 3. Run react-native unlink for each one.
+      log 'Unlinking dependencies'
       dependencies.each do |dep|
-        execute 'react-native', 'unlink', dep
+        run_command_with_spinner! 'react-native', 'unlink', dep, log: File.join(Dir.tmpdir, "react-native-unlink-#{dep}.log")
       end
 
       # reload after react-native unlink
@@ -121,19 +122,26 @@ module ReactNativeUtil
       generate_podfile!
 
       # 6. Run react-native link for each dependency.
+      log 'Linking dependencies'
       deps_to_add.each do |dep|
-        execute 'react-native', 'link', dep
+        run_command_with_spinner! 'react-native', 'link', dep, log: File.join(Dir.tmpdir, "react-native-link-#{dep}.log")
       end
 
       # 7. pod install
+      log "Generating Pods project and ios/#{app_name}.xcworkspace"
       command = %w[pod install]
       command << '--repo-update' if options[:repo_update]
-      run_command_with_spinner(*command, chdir: 'ios', log: File.join(Dir.tmpdir, 'pod-install.log'))
+      run_command_with_spinner!(*command, chdir: 'ios', log: File.join(Dir.tmpdir, 'pod-install.log'))
+
+      log 'Conversion complete ✅'
 
       # 8. SCM/git (add, commit - optional)
 
       # 9. Open workspace/build
       execute 'open', File.join('ios', "#{app_name}.xcworkspace")
+    rescue ExecutionError => e
+      log e.message.red.bold
+      exit(-1)
     end
 
     # Read the contents of ./package.json into @package_json
@@ -267,6 +275,7 @@ module ReactNativeUtil
 
     # Generate a Podfile from a template.
     def generate_podfile!
+      log "Generating #{podfile_path}"
       podfile_contents = ERB.new(File.read(PODFILE_TEMPLATE_PATH)).result binding
       File.open podfile_path, 'w' do |file|
         file.write podfile_contents
