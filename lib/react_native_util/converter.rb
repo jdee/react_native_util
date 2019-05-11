@@ -38,6 +38,7 @@ module ReactNativeUtil
     attr_reader :xcodeproj
 
     attr_reader :options
+    attr_reader :react_podspec
 
     def initialize(repo_update: nil)
       @options = {}
@@ -73,6 +74,8 @@ module ReactNativeUtil
       # Don't run yarn until we're sure we're proceeding,
       log 'Installing NPM dependencies with yarn'
       execute 'yarn'
+
+      load_react_podspec!
 
       # 2. Detect native dependencies in Libraries group.
       log 'Dependencies:'
@@ -140,6 +143,17 @@ module ReactNativeUtil
       raise ConversionError, "Failed to open #{xcodeproj_path}. File not found."
     rescue Xcodeproj::PlainInformative => e
       raise ConversionError, "Failed to load #{xcodeproj_path}: #{e.message}"
+    end
+
+    def load_react_podspec!
+      podspec_dir = 'node_modules/react-native'
+      podspec_contents = File.read "#{podspec_dir}/React.podspec"
+      podspec_contents.gsub!(/__dir__/, podspec_dir.inspect)
+
+      require 'cocoapods-core'
+      # rubocop: disable Security/Eval
+      @react_podspec = eval(podspec_contents)
+      # rubocop: enable Security/Eval
     end
 
     # A representation of the Libraries group (if any) from the Xcode project.
