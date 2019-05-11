@@ -7,9 +7,6 @@ require_relative 'exceptions'
 module ReactNativeUtil
   # Module with utility methods
   module Util
-    # [TTY::Platform] Object with platform information
-    attr_reader :platform
-
     # Executes a command with no output to the terminal. A spinner is displayed
     # instead. Output may be directed to a file.
     # @param command Variadic command to be executed
@@ -76,12 +73,16 @@ module ReactNativeUtil
       value.to_f
     end
 
+    # [TTY::Platform] Object with platform information
+    def platform
+      @platform ||= TTY::Platform.new
+    end
+
     # Convenience method to determine if running on a Mac.
     # @return true if running on a Mac
     # @return false otherwise
     def mac?
-      @platform ||= TTY::Platform.new
-      @platform.mac?
+      platform.mac?
     end
 
     # Wrapper for STDOUT.log
