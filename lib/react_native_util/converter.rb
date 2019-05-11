@@ -92,6 +92,9 @@ module ReactNativeUtil
       validate_app_target!
       add_packager_script
 
+      # Make a note of pod subspecs to replace Libraries group
+      load_subspecs_from_libraries
+
       # 4b. Remove Libraries group from Xcode project.
       remove_libraries_group_from_project!
 
@@ -168,6 +171,10 @@ module ReactNativeUtil
       to_remove.each { |f| target.frameworks_build_phase.remove_build_file f }
     end
 
+    # TODO: A better approach to all of this: Look for subspecs under
+    # node_modules/react-native. Anything that isn't under react-native
+    # is an external dep.
+
     # A list of external dependencies from NPM requiring react-native link.
     # @return [Array<String>] a list of NPM package names
     def dependencies
@@ -189,12 +196,29 @@ module ReactNativeUtil
       paths.map { |p| File.expand_path p, File.join(Dir.pwd, 'ios') }
     end
 
+    def library_roots
+      libraries_group.children.map do |library|
+        File.basename(library.path).sub(/\.xcodeproj$/, '')
+      end
+    end
+
     # All static libraries from the Libraries group
     # @return [Array<String>] an array of filenames
     def static_libs
-      libraries_group.children.map do |library|
-        root = File.basename(library.path).sub(/\.xcodeproj$/, '')
-        "lib#{root}.a"
+      library_roots.map { |root| "lib#{root}.a" }
+    end
+
+    def load_subspecs_from_libraries
+      roots = library_roots - %w[React]
+      @subspecs_from_libraries = roots.select { |r| DEFAULT_DEPENDENCIES.include?(r) }.map do |root|
+        # TODO: Improve this by finding subspecs from the React.podspec
+        # and mapping them to Xcode projects under node_modules/react-native.
+        case root
+        when 'RCTLinking'
+          'RCTLinkingIOS'
+        else
+          root
+        end
       end
     end
 

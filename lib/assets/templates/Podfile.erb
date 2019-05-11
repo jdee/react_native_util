@@ -7,17 +7,7 @@ target '<%= app_name %>' do
       Core
       CxxBridge
       DevSupport
-      RCTActionSheet
-      RCTAnimation
-      RCTBlob
-      RCTGeolocation
-      RCTImage
-      RCTLinkingIOS
-      RCTNetwork
-      RCTSettings
-      RCTText
-      RCTVibration
-      RCTWebSocket
+      <%= @subspecs_from_libraries.join("\n      ") %>
     ]
   pod 'yoga', path: '../node_modules/react-native/ReactCommon/yoga'
   pod 'Folly', podspec: '../node_modules/react-native/third-party-podspecs/Folly.podspec'
