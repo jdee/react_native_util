@@ -9,17 +9,21 @@ module ReactNativeUtil
   class Converter
     include Util
 
-    # [Array<String>] Default contents of Libraries group
+    # [Array<String>] Xcode projects from react-native that may be in the Libraries group
     DEFAULT_DEPENDENCIES = %w[
-      RCTAnimation
+      ART
       React
       RCTActionSheet
+      RCTAnimation
       RCTBlob
+      RCTCameraRoll
       RCTGeolocation
       RCTImage
       RCTLinking
       RCTNetwork
+      RCTPushNotification
       RCTSettings
+      RCTTest
       RCTText
       RCTVibration
       RCTWebSocket
@@ -38,6 +42,7 @@ module ReactNativeUtil
     attr_reader :xcodeproj
 
     attr_reader :options
+    attr_reader :react_podspec
 
     def initialize(repo_update: nil)
       @options = {}
@@ -60,11 +65,8 @@ module ReactNativeUtil
       log 'package.json:'
       log " app name: #{app_name.inspect}"
 
-      log 'Installing NPM dependencies with yarn'
-      execute 'yarn'
-
       # 1. Detect project. TODO: Add an option to override.
-      @xcodeproj_path = File.expand_path "ios/#{package_json['name']}.xcodeproj"
+      @xcodeproj_path = File.expand_path "ios/#{app_name}.xcodeproj"
       load_xcodeproj!
       log "Found Xcode project at #{xcodeproj_path}"
 
@@ -72,6 +74,13 @@ module ReactNativeUtil
         log "Libraries group not found in #{xcodeproj_path}. No conversion necessary."
         exit 0
       end
+
+      # Don't run yarn until we're sure we're proceeding,
+      log 'Installing NPM dependencies with yarn'
+      execute 'yarn'
+
+      # Unused, but should be there and parseable
+      load_react_podspec!
 
       # 2. Detect native dependencies in Libraries group.
       log 'Dependencies:'
@@ -92,13 +101,15 @@ module ReactNativeUtil
       validate_app_target!
       add_packager_script
 
+      # Make a note of pod subspecs to replace Libraries group
+      load_subspecs_from_libraries
+
       # 4b. Remove Libraries group from Xcode project.
       remove_libraries_group_from_project!
 
       xcodeproj.save
 
       # 5. Generate boilerplate Podfile.
-      # TODO: Determine appropriate subspecs from contents of Libraries group
       generate_podfile!
 
       # 6. Run react-native link for each dependency.
@@ -136,6 +147,17 @@ module ReactNativeUtil
       raise ConversionError, "Failed to open #{xcodeproj_path}. File not found."
     rescue Xcodeproj::PlainInformative => e
       raise ConversionError, "Failed to load #{xcodeproj_path}: #{e.message}"
+    end
+
+    def load_react_podspec!
+      podspec_dir = 'node_modules/react-native'
+      podspec_contents = File.read "#{podspec_dir}/React.podspec"
+      podspec_contents.gsub!(/__dir__/, podspec_dir.inspect)
+
+      require 'cocoapods-core'
+      # rubocop: disable Security/Eval
+      @react_podspec = eval(podspec_contents)
+      # rubocop: enable Security/Eval
     end
 
     # A representation of the Libraries group (if any) from the Xcode project.
@@ -189,12 +211,27 @@ module ReactNativeUtil
       paths.map { |p| File.expand_path p, File.join(Dir.pwd, 'ios') }
     end
 
+    def library_roots
+      libraries_group.children.map do |library|
+        File.basename(library.path).sub(/\.xcodeproj$/, '')
+      end
+    end
+
     # All static libraries from the Libraries group
     # @return [Array<String>] an array of filenames
     def static_libs
-      libraries_group.children.map do |library|
-        root = File.basename(library.path).sub(/\.xcodeproj$/, '')
-        "lib#{root}.a"
+      library_roots.map { |root| "lib#{root}.a" }
+    end
+
+    def load_subspecs_from_libraries
+      roots = library_roots - %w[React]
+      @subspecs_from_libraries = roots.select { |r| DEFAULT_DEPENDENCIES.include?(r) }.map do |root|
+        case root
+        when 'RCTLinking'
+          'RCTLinkingIOS'
+        else
+          root
+        end
       end
     end
 
