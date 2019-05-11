@@ -22,6 +22,7 @@ module ReactNativeUtil
 
         c.action do |_args, opts|
           begin
+            log "#{NAME} react_pod v#{VERSION}".bold
             converter = Converter.new repo_update: opts.repo_update
             converter.convert_to_react_pod!
             exit 0
