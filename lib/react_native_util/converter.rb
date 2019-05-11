@@ -190,10 +190,6 @@ module ReactNativeUtil
       to_remove.each { |f| target.frameworks_build_phase.remove_build_file f }
     end
 
-    # TODO: A better approach to all of this: Look for subspecs under
-    # node_modules/react-native. Anything that isn't under react-native
-    # is an external dep.
-
     # A list of external dependencies from NPM requiring react-native link.
     # @return [Array<String>] a list of NPM package names
     def dependencies
@@ -230,9 +226,6 @@ module ReactNativeUtil
     def load_subspecs_from_libraries
       roots = library_roots - %w[React]
       @subspecs_from_libraries = roots.select { |r| DEFAULT_DEPENDENCIES.include?(r) }.map do |root|
-        # TODO: Improve this by finding subspecs from the React.podspec
-        # and mapping them to Xcode projects under node_modules/react-native?
-        # Maybe this is sufficient for now.
         case root
         when 'RCTLinking'
           'RCTLinkingIOS'
