@@ -61,7 +61,7 @@ module ReactNativeUtil
       log " app name: #{app_name.inspect}"
 
       # 1. Detect project. TODO: Add an option to override.
-      @xcodeproj_path = File.expand_path "ios/#{package_json['name']}.xcodeproj"
+      @xcodeproj_path = File.expand_path "ios/#{app_name}.xcodeproj"
       load_xcodeproj!
       log "Found Xcode project at #{xcodeproj_path}"
 
