@@ -87,7 +87,6 @@ module ReactNativeUtil
       log 'Installing NPM dependencies with yarn'
       run_command_with_spinner! 'yarn', log: File.join(Dir.tmpdir, 'yarn.log')
 
-      # Unused, but should be there and parseable
       load_react_podspec!
 
       # 2. Detect native dependencies in Libraries group.
@@ -254,6 +253,10 @@ module ReactNativeUtil
       @app_name ||= package_json['name']
     end
 
+    def app_target
+      xcodeproj.targets.find { |t| t.name == app_name }
+    end
+
     def test_target
       xcodeproj.targets.select(&:test_target_type?).reject { |t| t.name =~ /tvOS/ }.first
     end
@@ -261,7 +264,6 @@ module ReactNativeUtil
     # Validate an assumption about the project. TODO: Provide override option.
     # @raise ConversionError if an application target is not found with the same name as the project.
     def validate_app_target!
-      app_target = xcodeproj.targets.find { |t| t.name = app_name }
       raise ConversionError, "Unable to find target #{app_name} in #{xcodeproj_path}." if app_target.nil?
       raise ConversionError, "Target #{app_name} is not an application target." unless app_target.product_type == 'com.apple.product-type.application'
     end
@@ -319,9 +321,7 @@ module ReactNativeUtil
       # location of project is different relative to packager script
       script = old_packager_phase.shell_script.gsub(%r{../scripts}, '../node_modules/react-native/scripts')
 
-      # target can't be nil. Already validated earlier by #validate_app_target!
-      target = xcodeproj.targets.find { |t| t.name == app_name }
-      phase = target.new_shell_script_build_phase old_packager_phase.name
+      phase = app_target.new_shell_script_build_phase old_packager_phase.name
       phase.shell_script = script
     end
 
