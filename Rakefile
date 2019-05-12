@@ -20,7 +20,8 @@ task 'clobber:all' => :clobber do
     'examples/TestApp/ios/Podfile',
     'examples/TestApp/ios/Podfile.lock',
     'examples/TestApp/ios/Pods',
-    'examples/TestApp/ios/TestApp.xcworkspace'
+    'examples/TestApp/ios/TestApp.xcworkspace',
+    'examples/TestApp/node_modules'
   ]
 end
 
