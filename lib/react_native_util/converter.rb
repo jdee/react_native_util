@@ -285,7 +285,7 @@ module ReactNativeUtil
     # @raise Xcodeproj::PlainInformative in case of most failures
     def load_react_project!
       path = project.libraries_group.children.find { |c| c.path =~ /React.xcodeproj/ }.real_path
-      @react_project = Xcodeproj::Project.open path
+      @react_project = Project.open path
     end
   end
 end
