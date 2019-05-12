@@ -1,13 +1,13 @@
 module ReactNativeUtil
   # Base class for exceptions from this gem
-  class ReactNativeUtilException < RuntimeError
+  class BaseException < RuntimeError
   end
 
   # Exception raised when command execution fails
-  class ExecutionError < ReactNativeUtilException
+  class ExecutionError < BaseException
   end
 
   # Generic conversion error
-  class ConversionError < ReactNativeUtilException
+  class ConversionError < BaseException
   end
 end
