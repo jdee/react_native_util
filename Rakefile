@@ -21,6 +21,10 @@ task 'clobber:all' => :clobber do
 end
 
 require_relative 'lib/react_native_util/rake_task'
-ReactNativeUtil::RakeTask.new chdir: File.expand_path('examples/TestApp', __dir)
+ReactNativeUtil::RakeTask.new(
+  :react_pod,
+  'Convert TestApp to use React pod',
+  chdir: File.expand_path('examples/TestApp', __dir__)
+)
 
 task default: [:spec, :rubocop]
