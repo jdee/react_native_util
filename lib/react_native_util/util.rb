@@ -108,13 +108,11 @@ module ReactNativeUtil
         commands.each { |c| validate_commands! c }
       elsif commands.kind_of?(Hash)
         commands.each do |key, value|
-          log "Validating #{key} (#{value})"
           next if have_command?(key)
 
           raise ConversionError, "#{key} command not found. Please install #{value} to continue."
         end
       else
-        log "Validating #{commands}"
         if !have_command? commands
           raise ConversionError, "#{commands} command not found. Please install #{commands} to continue."
         end
