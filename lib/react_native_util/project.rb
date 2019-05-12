@@ -101,8 +101,8 @@ module ReactNativeUtil
     # Adds the Start Packager script from the React.xcodeproj under node_modules
     # to the main application target before deleting React.xcodeproj from the
     # Libraries group. Adjusts paths in the script to account for the different
-    # project location. If React.xcodeproj cannot be opened, or if the relevant
-    # build phase is not found, a warning is logged, and this step is skipped.
+    # project location. If the relevant build phase is not found, a warning is
+    # logged, and this step is skipped.
     #
     # TODO: The build phase is added after all other build phases. Ideally it
     # can be moved to the beginning. The packager is independent of the Xcode
@@ -130,10 +130,10 @@ module ReactNativeUtil
       library_roots.map { |root| "lib#{root}.a" }
     end
 
-    # Returns the original Start Packager build phase from the React.xcodeproj
-    # under node_modules. This contains the original script.
+    # Returns the original Start Packager build phase (from the React.xcodeproj
+    # under node_modules). This contains the original script.
     # @return the packager build phase if found
-    # @return nil if not found or React.xcodeproj cannot be opened
+    # @return nil if not found
     def packager_phase
       targets.first.build_phases.find { |p| p.name =~ /packager/i }
     end
