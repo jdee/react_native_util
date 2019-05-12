@@ -46,53 +46,33 @@ rn react_pod -h
 
 ## Try it out
 
-First set up a test app:
-```bash
-react-native init TestApp
-cd TestApp
-yarn add react-native-webview
-react-native link react-native-webview
-git init .
-git add .
-git commit -m'Before conversion'
-```
+Convert examples/TestApp using Rake.
 
-Now do the conversion:
 ```bash
-rn react_pod
+bundle check || bundle install
+bundle exec rake react_pod
 git status
 ```
 
 _Typical command output:_
 ```
-2019-05-11T12:25:14-07:00 react_native_util react_pod v0.2.0
-2019-05-11T12:25:14-07:00  Installed from Homebrew
-2019-05-11T12:25:14-07:00  Darwin 18.5.0 x86_64
-2019-05-11T12:25:14-07:00  Ruby 2.3.7: /System/Library/Frameworks/Ruby.framework/Versions/2.3/usr/bin/ruby
-2019-05-11T12:25:14-07:00  RubyGems 2.6.14: /usr/bin/gem
-2019-05-11T12:25:14-07:00  react-native-cli: /usr/local/bin/react-native
-2019-05-11T12:25:14-07:00   react-native-cli: 2.0.1
-2019-05-11T12:25:14-07:00   react-native: 0.59.8
-2019-05-11T12:25:14-07:00  yarn 1.16.0: /usr/local/bin/yarn
-2019-05-11T12:25:15-07:00  cocoapods 1.6.1: /usr/local/bin/pod
-2019-05-11T12:25:15-07:00  cocoapods-core: 1.6.1
-2019-05-11T12:25:15-07:00 package.json:
-2019-05-11T12:25:15-07:00  app name: "TestApp"
-2019-05-11T12:25:15-07:00 Found Xcode project at ~/sandbox/TestApp/ios/TestApp.xcodeproj
-2019-05-11T12:25:15-07:00 Installing NPM dependencies with yarn
-[✔] yarn success in 0.8 s
-2019-05-11T12:25:16-07:00 Dependencies:
-2019-05-11T12:25:16-07:00  react-native-webview
-2019-05-11T12:25:16-07:00 Unlinking dependencies
+2019-05-11T21:20:12-07:00 package.json:
+2019-05-11T21:20:12-07:00  app name: "TestApp"
+2019-05-11T21:20:12-07:00 Found Xcode project at ~/github/jdee/react_native_util/examples/TestApp/ios/TestApp.xcodeproj
+2019-05-11T21:20:12-07:00 Installing NPM dependencies with yarn
+[✔] yarn success in 11.2 s
+2019-05-11T21:20:23-07:00 Dependencies:
+2019-05-11T21:20:23-07:00  react-native-webview
+2019-05-11T21:20:23-07:00 Unlinking dependencies
 [✔] react-native unlink react-native-webview success in 0.6 s
-2019-05-11T12:25:17-07:00 Removing Libraries from TestApp
-2019-05-11T12:25:17-07:00 Removing Libraries from TestAppTests
-2019-05-11T12:25:17-07:00 Removing Libraries group
-2019-05-11T12:25:17-07:00 Generating ios/Podfile
-2019-05-11T12:25:17-07:00 Linking dependencies
+2019-05-11T21:20:24-07:00 Removing Libraries from TestApp
+2019-05-11T21:20:24-07:00 Removing Libraries from TestAppTests
+2019-05-11T21:20:24-07:00 Removing Libraries group
+2019-05-11T21:20:24-07:00 Generating ios/Podfile
+2019-05-11T21:20:24-07:00 Linking dependencies
 [✔] react-native link react-native-webview success in 0.6 s
-2019-05-11T12:25:17-07:00 Generating Pods project and ios/TestApp.xcworkspace
-[✔] pod install success in 10.5 s
-2019-05-11T12:25:28-07:00 Conversion complete ✅
-2019-05-11T12:25:28-07:00 $ open ios/TestApp.xcworkspace
+2019-05-11T21:20:25-07:00 Generating Pods project and ios/TestApp.xcworkspace
+[✔] pod install success in 8.2 s
+2019-05-11T21:20:33-07:00 Conversion complete ✅
+2019-05-11T21:20:33-07:00 $ open ios/TestApp.xcworkspace
 ```
