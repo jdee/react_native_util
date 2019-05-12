@@ -1,4 +1,5 @@
 require 'colored'
+require 'tmpdir'
 require 'tty/platform'
 require 'tty/spinner'
 require_relative 'core_ext/io'
@@ -90,6 +91,32 @@ module ReactNativeUtil
     # @param message [#to_s] message to log
     def log(message)
       STDOUT.log message
+    end
+
+    # Determine if a specific command is available.
+    #
+    # @param command [#to_s] A command to check for
+    # @return true if found, false otherwise
+    def have_command?(command)
+      # May be shell-dependent, OS-dependent
+      # Kernel#system does not raise Errno::ENOENT when running under the Bundler
+      !`which #{command}`.empty?
+    end
+
+    def validate_yarn!
+      return if have_command?(:yarn)
+
+      unless have_command?(:brew)
+        raise ConversionError, 'yarn command not found, and brew command not available to install yarn. Please install yarn to continue. https://yarnpkg.com'
+      end
+
+      answer = ask 'yarn command not found. Install from Homebrew? [Y/n]', nil
+      raise ConversionError, 'yarn command not found. Please install yarn to continue. https://yarnpkg.com' unless answer
+
+      run_command_with_spinner! 'brew', 'install', 'yarn', log: File.join(Dir.tmpdir, 'brew-install-yarn.log')
+    end
+
+    def validate_react_native_cli!
     end
   end
 end

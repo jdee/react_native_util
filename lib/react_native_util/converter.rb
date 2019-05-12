@@ -2,7 +2,6 @@ require 'cocoapods-core'
 require 'erb'
 require 'json'
 require 'rubygems'
-require 'tmpdir'
 require_relative 'project'
 
 module ReactNativeUtil
@@ -56,6 +55,9 @@ module ReactNativeUtil
     def convert_to_react_pod!
       # Make sure no uncommitted changes
       check_repo_status!
+
+      validate_yarn!
+      validate_react_native_cli!
 
       report_configuration!
 
