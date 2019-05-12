@@ -2,7 +2,6 @@ require 'cocoapods-core'
 require 'erb'
 require 'json'
 require 'rubygems'
-require 'tmpdir'
 require_relative 'project'
 
 module ReactNativeUtil
@@ -12,6 +11,8 @@ module ReactNativeUtil
 
     # [String] Path to the Podfile template
     PODFILE_TEMPLATE_PATH = File.expand_path '../assets/templates/Podfile.erb', __dir__
+
+    REQUIRED_COMMANDS = [:yarn, 'react-native' => 'react-native-cli']
 
     # [Hash] Contents of ./package.json
     attr_reader :package_json
@@ -54,6 +55,8 @@ module ReactNativeUtil
     # @raise ExecutionError on generic command failure
     # @raise Errno::ENOENT if a required command is not present
     def convert_to_react_pod!
+      validate_commands! REQUIRED_COMMANDS
+
       # Make sure no uncommitted changes
       check_repo_status!
 
