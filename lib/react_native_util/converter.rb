@@ -1,5 +1,7 @@
+require 'cocoapods-core'
 require 'erb'
 require 'json'
+require 'rubygems'
 require 'tmpdir'
 require 'tty/platform'
 require 'xcodeproj'
@@ -57,10 +59,12 @@ module ReactNativeUtil
     # Convert project to use React pod
     # @raise ConversionError on failure
     def convert_to_react_pod!
-      raise ConversionError, "macOS required." unless mac?
-
       # Make sure no uncommitted changes
       check_repo_status!
+
+      report_configuration!
+
+      raise ConversionError, "macOS required." unless mac?
 
       load_package_json!
       log 'package.json:'
@@ -82,10 +86,6 @@ module ReactNativeUtil
         log 'This release can only convert apps that do not currently use a Podfile.'
         exit 1
       end
-
-      # Don't run yarn until we're sure we're proceeding.
-      log 'Installing NPM dependencies with yarn'
-      run_command_with_spinner! 'yarn', log: File.join(Dir.tmpdir, 'yarn.log')
 
       load_react_podspec!
 
@@ -148,6 +148,60 @@ module ReactNativeUtil
       raise ConversionError, 'Failed to load package.json. File not found. Please run from the project root.'
     rescue JSON::ParserError => e
       raise ConversionError, "Failed to parse package.json: #{e.message}"
+    end
+
+    def install_npm_deps_if_needed!
+      raise ConversionError, 'package.json not found. Please run from the project root.' unless File.readable?('package.json')
+
+      execute 'yarn', 'check', '--integrity', log: nil, output: :close
+      execute 'yarn', 'check', '--verify-tree', log: nil, output: :close
+    rescue ExecutionError
+      # install deps if either check fails
+      run_command_with_spinner! 'yarn', 'install', log: File.join(Dir.tmpdir, 'yarn.log')
+    end
+
+    def report_configuration!
+      log "#{NAME} react_pod v#{VERSION}".bold
+
+      install_npm_deps_if_needed!
+
+      log ' Installed from Homebrew' if ENV['REACT_NATIVE_UTIL_INSTALLED_FROM_HOMEBREW']
+
+      log " #{`uname -msr`}"
+
+      log " Ruby #{RUBY_VERSION}: #{RbConfig.ruby}"
+      log " RubyGems #{Gem::VERSION}: #{`which gem`}"
+      log " Bundler #{Bundler::VERSION}: #{`which bundle`}" if defined?(Bundler)
+
+      log_command_path 'react-native', 'react-native-cli', include_version: false
+      unless `which react-native`.empty?
+        react_native_info = `react-native --version`
+        react_native_info.split("\n").each { |l| log "  #{l}" }
+      end
+
+      log_command_path 'yarn'
+      log_command_path 'pod', 'cocoapods'
+
+      log " cocoapods-core: #{Pod::CORE_VERSION}"
+    rescue Errno::ENOENT
+      # On Windows, e.g., which and uname may not work.
+      log 'Conversion failed: macOS required.'.red.bold
+      exit(-1)
+    end
+
+    def log_command_path(command, package = command, include_version: true)
+      path = `which #{command}`
+      if path.empty?
+        log " #{package}: #{'not found'.red.bold}"
+        return
+      end
+
+      if include_version
+        version = `#{command} --version`.chomp
+        log " #{package} #{version}: #{path}"
+      else
+        log " #{package}: #{path}"
+      end
     end
 
     # Load the project at @xcodeproj_path into @xcodeproj
