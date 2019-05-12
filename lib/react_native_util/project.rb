@@ -111,7 +111,7 @@ module ReactNativeUtil
     # Currently it's possible to simply drag the build phase in Xcode to a
     # higher position after running the react_pod command.
     def add_packager_script_from(react_project)
-      old_packager_phase = packager_phase_from react_project
+      old_packager_phase = react_project.packager_phase
       unless old_packager_phase
         log 'Could not find packager build phase in React.xcodeproj. Skipping.'.yellow
         return
@@ -134,8 +134,8 @@ module ReactNativeUtil
     # under node_modules. This contains the original script.
     # @return the packager build phase if found
     # @return nil if not found or React.xcodeproj cannot be opened
-    def packager_phase_from(react_project)
-      react_project.targets.first.build_phases.find { |p| p.name =~ /packager/i }
+    def packager_phase
+      targets.first.build_phases.find { |p| p.name =~ /packager/i }
     end
   end
 end
