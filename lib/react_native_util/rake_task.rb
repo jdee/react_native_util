@@ -14,7 +14,7 @@ module ReactNativeUtil
       desc description
       task name do
         Dir.chdir chdir do
-          Converter.new(repo_update: repo_update).run
+          Converter.new(repo_update: repo_update).convert_to_react_pod!
         end
       end
     end
