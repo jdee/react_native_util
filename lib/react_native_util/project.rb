@@ -38,7 +38,7 @@ module ReactNativeUtil
     # Validate an assumption about the project. TODO: Provide override option.
     # @raise ConversionError if an application target is not found with the same name as the project.
     def validate_app_target!
-      raise ConversionError, "Unable to find target #{app_name} in #{xcodeproj_path}." if app_target.nil?
+      raise ConversionError, "Unable to find target #{app_name} in #{path}." if app_target.nil?
       raise ConversionError, "Target #{app_name} is not an application target." unless app_target.product_type == 'com.apple.product-type.application'
     end
 
