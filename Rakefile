@@ -16,7 +16,11 @@ task 'clobber:all' => :clobber do
     'doc',
     '.yardoc',
     '_yardoc',
-    'test-results'
+    'test-results',
+    'examples/TestApp/ios/Podfile',
+    'examples/TestApp/ios/Podfile.lock',
+    'examples/TestApp/ios/Pods',
+    'examples/TestApp/ios/TestApp.xcworkspace'
   ]
 end
 
