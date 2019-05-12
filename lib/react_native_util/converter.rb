@@ -12,6 +12,8 @@ module ReactNativeUtil
     # [String] Path to the Podfile template
     PODFILE_TEMPLATE_PATH = File.expand_path '../assets/templates/Podfile.erb', __dir__
 
+    REQUIRED_COMMANDS = [:yarn, 'react-native' => 'react-native-cli']
+
     # [Hash] Contents of ./package.json
     attr_reader :package_json
 
@@ -53,11 +55,10 @@ module ReactNativeUtil
     # @raise ExecutionError on generic command failure
     # @raise Errno::ENOENT if a required command is not present
     def convert_to_react_pod!
+      REQUIRED_COMMANDS.each { |c| validate_command! c }
+
       # Make sure no uncommitted changes
       check_repo_status!
-
-      validate_yarn!
-      validate_react_native_cli!
 
       report_configuration!
 

@@ -13,9 +13,13 @@ Community utility CLI for React Native projects.
 
 _macOS required_
 
+It's not necessary to install yarn or react-native-cli separately when
+installing from the Homebrew tap with `brew install jdee/tap/react_native_util`.
+They will be installed as required dependencies. If they are not present when
+running from RubyGems, the react_pod command will fail.
 ```bash
-brew install yarn # Not necessary if installing from Homebrew tap
-npm install -g react-native-cli
+brew install yarn
+brew install react-native-cli
 ```
 
 ## Installation

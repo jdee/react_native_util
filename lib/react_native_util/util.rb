@@ -103,20 +103,18 @@ module ReactNativeUtil
       !`which #{command}`.empty?
     end
 
-    def validate_yarn!
-      return if have_command?(:yarn)
+    def validate_command!(command)
+      if command.kind_of?(Hash)
+        command.each do |key, value|
+          log "Validating #{key.inspect} => #{value.inspect}"
+          next if have_command?(key)
 
-      unless have_command?(:brew)
-        raise ConversionError, 'yarn command not found, and brew command not available to install yarn. Please install yarn to continue. https://yarnpkg.com'
+          raise ConversionError, "#{key} command not found. Please install #{value} to continue."
+        end
+      elsif !have_command? command
+        log "Validating #{command}"
+        raise ConversionError, "#{command} command not found. Please install #{command} to continue."
       end
-
-      answer = ask 'yarn command not found. Install from Homebrew? [Y/n]', nil
-      raise ConversionError, 'yarn command not found. Please install yarn to continue. https://yarnpkg.com' unless answer
-
-      run_command_with_spinner! 'brew', 'install', 'yarn', log: File.join(Dir.tmpdir, 'brew-install-yarn.log')
-    end
-
-    def validate_react_native_cli!
     end
   end
 end
