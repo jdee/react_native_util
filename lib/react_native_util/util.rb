@@ -1,4 +1,5 @@
 require 'colored'
+require 'tty/platform'
 require 'tty/spinner'
 require_relative 'core_ext/io'
 require_relative 'core_ext/regexp'

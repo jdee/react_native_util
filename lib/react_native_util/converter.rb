@@ -3,7 +3,6 @@ require 'erb'
 require 'json'
 require 'rubygems'
 require 'tmpdir'
-require 'tty/platform'
 require_relative 'project'
 
 module ReactNativeUtil
