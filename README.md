@@ -114,7 +114,7 @@ require 'react_native_util/converter'
 Dir.chdir '/path/to/rn/project' do
   begin
     ReactNativeUtil::Converter.new(repo_update: true).convert_to_react_pod!
-  rescue ReactNativeUtil::ReactNativeUtilException => e
+  rescue ReactNativeUtil::BaseException => e
     puts "Error from #convert_to_react_pod!: #{e.message}"
   end
 end
