@@ -20,4 +20,7 @@ task 'clobber:all' => :clobber do
   ]
 end
 
+require_relative 'lib/react_native_util/rake_task'
+ReactNativeUtil::RakeTask.new chdir: File.expand_path('examples/TestApp', __dir)
+
 task default: [:spec, :rubocop]
