@@ -86,3 +86,32 @@ _Typical command output:_
 2019-05-12T11:42:25-07:00 Conversion complete ✅
 2019-05-12T11:42:25-07:00 $ open ios/TestApp.xcworkspace
 ```
+
+## Rake task
+
+Add to Rakefile:
+```Ruby
+require 'react_native_util/rake/react_pod_task'
+ReactNativeUtil::Rake::ReactPodTask.new
+```
+
+Customize:
+```Ruby
+require 'react_native_util/rake/react_pod_task'
+ReactNativeUtil::Rake::ReactPodTask.new(
+  :react_pod,                         # task name
+  'Convert project to use React pod', # description
+  chdir: '/path/to/rn/project',       # path to project package.json
+  repo_update: true                   # optionally disable pod repo update
+)
+```
+
+## Ruby script
+
+```Ruby
+require 'react_native_util/converter'
+
+Dir.chdir '/path/to/rn/project' do
+  ReactNativeUtil::Converter.new(repo_update: true).convert_to_react_pod!
+end
+```
