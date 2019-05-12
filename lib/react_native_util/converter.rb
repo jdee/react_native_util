@@ -55,7 +55,7 @@ module ReactNativeUtil
     # @raise ExecutionError on generic command failure
     # @raise Errno::ENOENT if a required command is not present
     def convert_to_react_pod!
-      REQUIRED_COMMANDS.each { |c| validate_command! c }
+      validate_commands! REQUIRED_COMMANDS
 
       # Make sure no uncommitted changes
       check_repo_status!

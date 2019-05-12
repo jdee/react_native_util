@@ -103,17 +103,21 @@ module ReactNativeUtil
       !`which #{command}`.empty?
     end
 
-    def validate_command!(command)
-      if command.kind_of?(Hash)
-        command.each do |key, value|
-          log "Validating #{key.inspect} => #{value.inspect}"
+    def validate_commands!(commands)
+      if commands.kind_of?(Array)
+        commands.each { |c| validate_commands! c }
+      elsif commands.kind_of?(Hash)
+        commands.each do |key, value|
+          log "Validating #{key} (#{value})"
           next if have_command?(key)
 
           raise ConversionError, "#{key} command not found. Please install #{value} to continue."
         end
-      elsif !have_command? command
-        log "Validating #{command}"
-        raise ConversionError, "#{command} command not found. Please install #{command} to continue."
+      else
+        log "Validating #{commands}"
+        if !have_command? commands
+          raise ConversionError, "#{commands} command not found. Please install #{commands} to continue."
+        end
       end
     end
   end
