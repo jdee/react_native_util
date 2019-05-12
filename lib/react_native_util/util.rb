@@ -103,20 +103,47 @@ module ReactNativeUtil
       !`which #{command}`.empty?
     end
 
+    # Validate one or more commands. If the specified command is not
+    # available in the PATH (via which), a ConversionError is raised noting
+    # the package to be installed (from Homebrew, e.g.).
+    #
+    # When package names to be installed differ from command names, a Hash
+    # may be used. For example:
+    #    validate_commands! [:yarn, 'react-native' => 'react-native-cli']
+    #
+    # @param commands [Array, Hash, #to_s] one or more commands to be validated.
+    # @raise ConversionError if any command not found
     def validate_commands!(commands)
-      if commands.kind_of?(Array)
-        commands.each { |c| validate_commands! c }
-      elsif commands.kind_of?(Hash)
+      errors = []
+
+      case commands
+      when Array
+        # Validate each command in the array, accumulating error messages
+        # if necessary.
+        commands.each do |c|
+          begin
+            validate_commands! c
+          rescue ConversionError => e
+            errors += e.message.split("\n")
+          end
+        end
+      when Hash
+        # Each key represents a command to check. The value is the package to
+        # install if missing.
         commands.each do |key, value|
           next if have_command?(key)
 
-          raise ConversionError, "#{key} command not found. Please install #{value} to continue."
+          errors << "#{key} command not found. Please install #{value} to continue."
         end
       else
-        if !have_command? commands
-          raise ConversionError, "#{commands} command not found. Please install #{commands} to continue."
-        end
+        # commands is a single command to be validated. The package name is the
+        # same. Usually a symbol or a string, but only has to respond to #to_s.
+        errors << "#{commands} command not found. Please install #{commands} to continue." unless have_command? commands
       end
+
+      return if errors.empty?
+
+      raise ConversionError, errors.join("\n")
     end
   end
 end
