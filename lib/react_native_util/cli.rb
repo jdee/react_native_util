@@ -16,7 +16,6 @@ CocoaPods with the React pod from node_modules. <%= color '#{NAME} react_pod -h'
 for more information.
 DESC
 
-
       command :react_pod do |c|
         c.syntax = "#{NAME} react_pod [OPTIONS]"
         c.summary = 'Convert a React Native app to use the React pod from node_modules.'
