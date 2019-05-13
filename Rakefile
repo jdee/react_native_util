@@ -116,3 +116,6 @@ task :bottle do
 end
 
 task default: [:spec, :rubocop]
+
+desc 'Release first to RubyGems, then to Homebrew tap'
+task 'release:all' => %i[release brew]
