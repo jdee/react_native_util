@@ -69,11 +69,26 @@ rn react_pod -h
 
 ## Try it out
 
-Convert examples/TestApp using Rake.
+Convert examples/TestApp.
 
+First install dependencies.
 ```bash
 bundle check || bundle install
+```
+
+Then use the Rake task
+```bash
 bundle exec rake react_pod
+```
+
+or the CLI.
+```bash
+cd examples/TestApp
+bundle exec rn react_pod
+```
+
+Finally see the changes.
+```bash
 git status
 ```
 
