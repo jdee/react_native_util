@@ -38,4 +38,81 @@ ReactNativeUtil::Rake::ReactPodTask.new(
   chdir: File.expand_path('examples/TestApp', __dir__)
 )
 
+require 'pattern_patch'
+require 'tty/spinner'
+require_relative 'lib/react_native_util/metadata'
+
+PACKAGE_NAME = ReactNativeUtil::NAME
+PACKAGE_VERSION = ReactNativeUtil::VERSION
+FORMULA = "Formula/#{PACKAGE_NAME}.rb"
+
+def capture_with_spinner(command, expect_fail: false)
+  spinner = TTY::Spinner.new "[:spinner] #{command}", format: :flip
+  spinner.auto_spin
+
+  output = `#{command}`
+
+  unless expect_fail || $?.success?
+    spinner.error $?.to_s
+    exit(-1)
+  end
+
+  spinner.success
+
+  output
+end
+
+def commit_and_push(tag: nil)
+  # Executed from homebrew-tap repo dir.
+  sh 'git', 'commit', "-qmRelease #{PACKAGE_VERSION} of #{PACKAGE_NAME}", FORMULA
+  sh 'git', 'tag', tag if tag
+  sh 'git', 'push', '-q', '--tags', 'origin', 'master'
+end
+
+desc 'Release to Homebrew tap'
+task :brew do
+  Dir.chdir '../homebrew-tap' do
+    # Update version number in formula
+    PatternPatch::Patch.new(
+      regexp: /(VERSION = ')[^']+/,
+      text: "\\1#{PACKAGE_VERSION}",
+      mode: :replace
+    ).apply FORMULA
+    puts "Updated formula to v#{PACKAGE_VERSION}"
+
+    # This command fails because of the mismatch. We want to capture the output
+    # anyway without reporting an issue.
+    output = capture_with_spinner "brew fetch --build-from-source #{FORMULA}", expect_fail: true
+    sha = output.split("\n").grep(/^SHA256/).first.sub(/^SHA256: /, '')
+
+    # Replace first occurrence of sha256
+    PatternPatch::Patch.new(
+      regexp: /(sha256 ")[0-9a-f]+/,
+      text: "\\1#{sha}",
+      mode: :replace
+    ).apply FORMULA
+
+    puts "Updated sha256 for gem to #{sha}"
+
+    commit_and_push
+  end
+end
+
+desc "Bottle #{PACKAGE_NAME}"
+task :bottle do
+  Dir.chdir '../homebrew-tap' do
+    sh 'brew', 'uninstall', PACKAGE_NAME
+    sh 'brew', 'install', '--build-bottle', PACKAGE_NAME
+    output = capture_with_spinner "brew bottle #{PACKAGE_NAME}"
+
+    puts output
+    # TODO: Pick the bottle sha out of the output. Patch the formula a third time.
+
+    # commit_and_push tag: "#{PACKAGE_NAME}-v#{PACKAGE_VERSION}"
+
+    # TODO: Post bottle as an attachment to the release on GitHub
+    # TODO: Remove bottle after successful POST
+  end
+end
+
 task default: [:spec, :rubocop]
