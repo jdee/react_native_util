@@ -287,8 +287,7 @@ module ReactNativeUtil
     # Load the contents of the React.xcodeproj project from node_modules.
     # @raise Xcodeproj::PlainInformative in case of most failures
     def load_react_project!
-      path = project.libraries_group.children.find { |c| c.path =~ /React.xcodeproj/ }.real_path
-      @react_project = Project.open path
+      @react_project = Project.open 'node_modules/react-native/React/React.xcodeproj'
     end
   end
 end
