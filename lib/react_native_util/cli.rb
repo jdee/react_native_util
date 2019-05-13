@@ -10,13 +10,23 @@ module ReactNativeUtil
     def run
       program :name, SUMMARY
       program :version, VERSION
-      program :description, DESCRIPTION
+      program :description, <<DESC
+[Work in progress] Converts a project created with <%= color 'react-native init', BOLD %> to use
+CocoaPods with the React pod from node_modules. <%= color '#{NAME} react_pod -h', BOLD %>
+for more information.
+DESC
+
 
       command :react_pod do |c|
         c.syntax = "#{NAME} react_pod [OPTIONS]"
         c.summary = 'Convert a React Native app to use the React pod from node_modules.'
-        c.description = "[Work in progress] Removes all static libraries built by the Libraries group and adds a generic " \
-          "Podfile.\nResults in a buildable, working project."
+        c.description = <<DESC
+[Work in progress] Converts a project created with <%= color 'react-native init', BOLD %> to use
+CocoaPods with the React pod from node_modules. This preserves compatibility
+with <%= color 'react-native link', BOLD %>. A converted project will still start the Metro packager
+automatically via a Run Script build phase in the Xcode project. This is an
+alternative to performing manual surgery on a project in Xcode.
+DESC
 
         c.option '--[no-]repo-update', 'Update the local podspec repo (default: update; env. var. REACT_NATIVE_UTIL_REPO_UPDATE)'
 
