@@ -62,9 +62,9 @@ def capture_with_spinner(command, expect_fail: false)
   output
 end
 
-def commit_and_push(tag: nil)
+def commit_and_push(message = "Release #{PACKAGE_VERSION} of #{PACKAGE_NAME}", tag: nil)
   # Executed from homebrew-tap repo dir.
-  sh 'git', 'commit', "-qmRelease #{PACKAGE_VERSION} of #{PACKAGE_NAME}", FORMULA
+  sh 'git', 'commit', "-qm#{message}", FORMULA
   sh 'git', 'tag', tag if tag
   sh 'git', 'push', '-q', '--tags', 'origin', 'master'
 end
@@ -108,7 +108,7 @@ task :bottle do
     puts output
     # TODO: Pick the bottle sha out of the output. Patch the formula a third time.
 
-    # commit_and_push tag: "#{PACKAGE_NAME}-v#{PACKAGE_VERSION}"
+    # commit_and_push "Bottle for release #{PACKAGE_VERSION} of #{PACKAGE_NAME}", tag: "#{PACKAGE_NAME}-v#{PACKAGE_VERSION}"
 
     # TODO: Post bottle as an attachment to the release on GitHub
     # TODO: Remove bottle after successful POST
