@@ -99,7 +99,7 @@ task :brew do
 
     # TODO: Pick the bottle sha out of the output. Patch the formula a third time.
 
-    # commit_and_push tag: "v#{PACKAGE_VERSION}"
+    # commit_and_push tag: "#{PACKAGE_NAME}-v#{PACKAGE_VERSION}"
 
     # TODO: Post bottle as an attachment to the release on GitHub
     # TODO: Remove bottle after successful POST
