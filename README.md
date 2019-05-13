@@ -136,3 +136,8 @@ Dir.chdir '/path/to/rn/project' do
   end
 end
 ```
+
+## Documentation
+
+Hosted [Yard](https://yardoc.org) documentation available at
+https://www.rubydoc.info/gems/react_native_util.
