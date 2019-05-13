@@ -17,7 +17,7 @@ alternative to performing manual surgery on a project in Xcode.
 
 ## Prerequisites
 
-_macOS required_
+_macOS & Xcode required_
 
 The react_pod command requires `yarn` from Homebrew and the `react-native-cli`.
 If installing react_native_util from the Homebrew tap, `yarn` will be
