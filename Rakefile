@@ -50,7 +50,7 @@ def capture_with_spinner(command, expect_fail: false)
   spinner = TTY::Spinner.new "[:spinner] #{command}", format: :flip
   spinner.auto_spin
 
-  output = `#{command}`
+  output = `#{command} 2>/dev/null`
 
   unless expect_fail || $?.success?
     spinner.error $?.to_s
@@ -101,14 +101,22 @@ end
 desc "Bottle #{PACKAGE_NAME}"
 task :bottle do
   Dir.chdir '../homebrew-tap' do
-    sh 'brew', 'uninstall', PACKAGE_NAME
+    # just for expect_fail
+    capture_with_spinner "brew uninstall #{PACKAGE_NAME}", expect_fail: true
     sh 'brew', 'install', '--build-bottle', PACKAGE_NAME
     output = capture_with_spinner "brew bottle #{PACKAGE_NAME}"
+    sha = output.split("\n").grep(/sha256/).first.sub(/^\s*sha256\s+"([0-9a-f]+).*$/, '\1')
 
-    puts output
-    # TODO: Pick the bottle sha out of the output. Patch the formula a third time.
+    # Replace second occurrence of sha256 in bottle stanza
+    PatternPatch::Patch.new(
+      regexp: /(^\s*bottle.*sha256 ")[0-9a-f]+/m,
+      text: "\\1#{sha}",
+      mode: :replace
+    ).apply FORMULA
 
-    # commit_and_push "Bottle for release #{PACKAGE_VERSION} of #{PACKAGE_NAME}", tag: "#{PACKAGE_NAME}-v#{PACKAGE_VERSION}"
+    puts "Updated sha256 for bottle to #{sha}"
+
+    commit_and_push "Bottle for release #{PACKAGE_VERSION} of #{PACKAGE_NAME}", tag: "#{PACKAGE_NAME}-v#{PACKAGE_VERSION}"
 
     # TODO: Post bottle as an attachment to the release on GitHub
     # TODO: Remove bottle after successful POST
@@ -118,4 +126,4 @@ end
 task default: [:spec, :rubocop]
 
 desc 'Release first to RubyGems, then to Homebrew tap'
-task 'release:all' => %i[release brew]
+task 'release:all' => %i[release brew bottle]
