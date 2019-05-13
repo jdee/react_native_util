@@ -108,7 +108,7 @@ _Typical command output:_
 
 Add to Rakefile:
 ```Ruby
-require 'react_native_util/rake/react_pod_task'
+require 'react_native_util/rake'
 ReactNativeUtil::Rake::ReactPodTask.new
 ```
 
