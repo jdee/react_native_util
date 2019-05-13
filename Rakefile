@@ -43,8 +43,9 @@ ReactNativeUtil::Rake::ReactPodTask.new(
 )
 
 require_relative 'rake/brew_tasks'
+require_relative 'rake/bump'
 
 task default: [:spec, :rubocop]
 
-desc 'Release first to RubyGems, then to Homebrew tap'
-task 'release:all' => %i[release brew bottle]
+desc 'Release first to RubyGems, then to Homebrew tap. Finally version bump.'
+task 'release:all' => %i[release brew bottle bump]
