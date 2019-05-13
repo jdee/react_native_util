@@ -38,4 +38,69 @@ ReactNativeUtil::Rake::ReactPodTask.new(
   chdir: File.expand_path('examples/TestApp', __dir__)
 )
 
+require 'pattern_patch'
+require 'tty/spinner'
+require_relative 'lib/react_native_util/metadata'
+
+def capture_with_spinner(command)
+  spinner = TTY::Spinner.new "[:spinner] #{command}", format: :flip
+  spinner.auto_spin
+
+  output = `#{command}`
+
+  unless $?.success?
+    spinner.error "#{$?}"
+    exit(-1)
+  end
+
+  spinner.success
+
+  output
+end
+
+def commit_and_push
+  # Executed from homebrew-tap repo dir.
+  sh 'git', 'commit', "-qmRelease #{ReactNativeUtil::VERSION} of react_native_util", 'Formula/react_native_util.rb'
+  sh 'git', 'push', '-q', 'origin', 'master'
+end
+
+desc 'Release to Homebrew tap'
+task :brew do
+  Dir.chdir '../homebrew-tap' do
+    # Update version number in formula
+    # PatternPatch::Patch.new(
+    #   regexp: /(VERSION = ')[^']+/,
+    #   text: "\\1#{ReactNativeUtil::VERSION}",
+    #   mode: :replace
+    # ).apply 'Formula/react_native_util.rb'
+    # puts "Updated formula to v#{ReactNativeUtil::VERSION}"
+
+    output = capture_with_spinner 'brew fetch --build-from-source Formula/react_native_util.rb'
+    sha = output.split("\n").grep(/^SHA256/).first.sub(/^SHA256: /, '')
+
+    # Replace first occurrence of sha256
+    PatternPatch::Patch.new(
+      regexp: /(sha256 ")[0-9a-f]+/,
+      text: "\\1#{sha}",
+      mode: :replace
+    ).apply 'Formula/react_native_util.rb'
+
+    puts "Updated sha256 for gem to #{sha}"
+
+    # commit_and_push
+
+    sh 'brew', 'install', '--build-bottle', 'Formula/react_native_util.rb'
+    output = capture_with_spinner 'brew bottle react_native_util'
+
+    puts output
+
+    # TODO: Post bottle as an attachment to the release on GitHub
+    # TODO: Remove bottle after successful POST
+
+    # TODO: Pick the DSL out of the output. Patch the formula a third time.
+
+    # commit_and_push
+  end
+end
+
 task default: [:spec, :rubocop]
