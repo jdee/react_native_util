@@ -42,6 +42,10 @@ require 'pattern_patch'
 require 'tty/spinner'
 require_relative 'lib/react_native_util/metadata'
 
+PACKAGE_NAME = ReactNativeUtil::NAME
+PACKAGE_VERSION = ReactNativeUtil::VERSION
+FORMULA = "Formula/#{PACKAGE_NAME}.rb"
+
 def capture_with_spinner(command)
   spinner = TTY::Spinner.new "[:spinner] #{command}", format: :flip
   spinner.auto_spin
@@ -58,24 +62,25 @@ def capture_with_spinner(command)
   output
 end
 
-def commit_and_push
+def commit_and_push(tag: nil)
   # Executed from homebrew-tap repo dir.
-  sh 'git', 'commit', "-qmRelease #{ReactNativeUtil::VERSION} of react_native_util", 'Formula/react_native_util.rb'
-  sh 'git', 'push', '-q', 'origin', 'master'
+  sh 'git', 'commit', "-qmRelease #{PACKAGE_VERSION} of #{PACKAGE_NAME}", FORMULA
+  sh 'git', 'tag', tag if tag
+  sh 'git', 'push', '-q', '--tags', 'origin', 'master'
 end
 
 desc 'Release to Homebrew tap'
 task :brew do
   Dir.chdir '../homebrew-tap' do
     # Update version number in formula
-    # PatternPatch::Patch.new(
-    #   regexp: /(VERSION = ')[^']+/,
-    #   text: "\\1#{ReactNativeUtil::VERSION}",
-    #   mode: :replace
-    # ).apply 'Formula/react_native_util.rb'
-    # puts "Updated formula to v#{ReactNativeUtil::VERSION}"
+    PatternPatch::Patch.new(
+      regexp: /(VERSION = ')[^']+/,
+      text: "\\1#{PACKAGE_VERSION}",
+      mode: :replace
+    ).apply FORMULA
+    puts "Updated formula to v#{PACKAGE_VERSION}"
 
-    output = capture_with_spinner 'brew fetch --build-from-source Formula/react_native_util.rb'
+    output = capture_with_spinner "brew fetch --build-from-source #{FORMULA}"
     sha = output.split("\n").grep(/^SHA256/).first.sub(/^SHA256: /, '')
 
     # Replace first occurrence of sha256
@@ -83,23 +88,21 @@ task :brew do
       regexp: /(sha256 ")[0-9a-f]+/,
       text: "\\1#{sha}",
       mode: :replace
-    ).apply 'Formula/react_native_util.rb'
+    ).apply FORMULA
 
     puts "Updated sha256 for gem to #{sha}"
 
     # commit_and_push
 
-    sh 'brew', 'install', '--build-bottle', 'Formula/react_native_util.rb'
-    output = capture_with_spinner 'brew bottle react_native_util'
+    sh 'brew', 'install', '--build-bottle', PACKAGE_NAME
+    output = capture_with_spinner "brew bottle #{PACKAGE_NAME}"
 
-    puts output
+    # TODO: Pick the bottle sha out of the output. Patch the formula a third time.
+
+    # commit_and_push tag: "v#{PACKAGE_VERSION}"
 
     # TODO: Post bottle as an attachment to the release on GitHub
     # TODO: Remove bottle after successful POST
-
-    # TODO: Pick the DSL out of the output. Patch the formula a third time.
-
-    # commit_and_push
   end
 end
 
