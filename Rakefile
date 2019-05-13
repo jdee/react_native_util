@@ -97,6 +97,7 @@ task :brew do
     sh 'brew', 'install', '--build-bottle', PACKAGE_NAME
     output = capture_with_spinner "brew bottle #{PACKAGE_NAME}"
 
+    puts output
     # TODO: Pick the bottle sha out of the output. Patch the formula a third time.
 
     # commit_and_push tag: "#{PACKAGE_NAME}-v#{PACKAGE_VERSION}"
