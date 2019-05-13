@@ -53,7 +53,7 @@ def capture_with_spinner(command, expect_fail: false)
   output = `#{command}`
 
   unless expect_fail || $?.success?
-    spinner.error "#{$?}"
+    spinner.error $?.to_s
     exit(-1)
   end
 
