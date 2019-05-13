@@ -5,7 +5,7 @@ require_relative '../converter'
 module ReactNativeUtil
   module Rake
     # Rakefile:
-    #   require 'react_native_util/rake/react_pod_task'
+    #   require 'react_native_util/rake'
     #   ReactNativeUtil::Rake::ReactPodTask.new chdir: '/path/to/rn/app'
     class ReactPodTask < ::Rake::TaskLib
       include Util

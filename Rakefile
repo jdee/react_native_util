@@ -31,7 +31,7 @@ task 'clobber:all' => [:clobber, 'clobber:examples'] do
   ]
 end
 
-require_relative 'lib/react_native_util/rake/react_pod_task'
+require_relative 'lib/react_native_util/rake'
 ReactNativeUtil::Rake::ReactPodTask.new(
   :react_pod,
   'Convert TestApp to use React pod',

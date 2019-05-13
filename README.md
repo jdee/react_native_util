@@ -114,7 +114,7 @@ ReactNativeUtil::Rake::ReactPodTask.new
 
 Customize:
 ```Ruby
-require 'react_native_util/rake/react_pod_task'
+require 'react_native_util/rake'
 ReactNativeUtil::Rake::ReactPodTask.new(
   :react_pod,                         # task name
   'Convert project to use React pod', # description
