@@ -46,13 +46,13 @@ PACKAGE_NAME = ReactNativeUtil::NAME
 PACKAGE_VERSION = ReactNativeUtil::VERSION
 FORMULA = "Formula/#{PACKAGE_NAME}.rb"
 
-def capture_with_spinner(command)
+def capture_with_spinner(command, expect_fail: false)
   spinner = TTY::Spinner.new "[:spinner] #{command}", format: :flip
   spinner.auto_spin
 
   output = `#{command}`
 
-  unless $?.success?
+  unless expect_fail || $?.success?
     spinner.error "#{$?}"
     exit(-1)
   end
@@ -80,7 +80,9 @@ task :brew do
     ).apply FORMULA
     puts "Updated formula to v#{PACKAGE_VERSION}"
 
-    output = capture_with_spinner "brew fetch --build-from-source #{FORMULA}"
+    # This command fails because of the mismatch. We want to capture the output
+    # anyway without reporting an issue.
+    output = capture_with_spinner "brew fetch --build-from-source #{FORMULA}", expect_fail: true
     sha = output.split("\n").grep(/^SHA256/).first.sub(/^SHA256: /, '')
 
     # Replace first occurrence of sha256
@@ -92,8 +94,14 @@ task :brew do
 
     puts "Updated sha256 for gem to #{sha}"
 
-    # commit_and_push
+    commit_and_push
+  end
+end
 
+desc "Bottle #{PACKAGE_NAME}"
+task :bottle do
+  Dir.chdir '../homebrew-tap' do
+    sh 'brew', 'uninstall', PACKAGE_NAME
     sh 'brew', 'install', '--build-bottle', PACKAGE_NAME
     output = capture_with_spinner "brew bottle #{PACKAGE_NAME}"
 
