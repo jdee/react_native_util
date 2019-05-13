@@ -103,13 +103,6 @@ module ReactNativeUtil
     # Libraries group. Adjusts paths in the script to account for the different
     # project location. If the relevant build phase is not found, a warning is
     # logged, and this step is skipped.
-    #
-    # TODO: The build phase is added after all other build phases. Ideally it
-    # can be moved to the beginning. The packager is independent of the Xcode
-    # build process. It may be started at any time. Starting it early is an
-    # optimization that allows it to load while the build is in progress.
-    # Currently it's possible to simply drag the build phase in Xcode to a
-    # higher position after running the react_pod command.
     def add_packager_script_from(react_project)
       old_packager_phase = react_project.packager_phase
       unless old_packager_phase
@@ -122,6 +115,13 @@ module ReactNativeUtil
 
       phase = app_target.new_shell_script_build_phase old_packager_phase.name
       phase.shell_script = script
+
+      # Move packager script to first position. This is independent of the
+      # entire Xcode build process. As an optimization, the packager can
+      # load its dependencies in parallel. This is the way it is on the
+      # original React.xcodeproj.
+      app_target.build_phases.delete phase
+      app_target.build_phases.insert 0, phase
     end
 
     # All static libraries from the Libraries group
