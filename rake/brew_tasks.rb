@@ -1,4 +1,4 @@
-require 'pattern_patch'
+require 'fileutils'
 require 'tty/spinner'
 require_relative '../lib/react_native_util/metadata'
 
@@ -63,8 +63,9 @@ task :bottle do
     sh 'brew', 'install', '--build-bottle', PACKAGE_NAME
     output = capture_with_spinner "brew bottle #{PACKAGE_NAME}"
     sha = output.split("\n").grep(/sha256/).first.sub(/^\s*sha256\s+"([0-9a-f]+).*$/, '\1')
+    bottle = output.split("\n").grep(/^\.#{PACKAGE_NAME}-/).first
 
-    # Replace second occurrence of sha256 in bottle stanza
+    # Replace second occurrence of sha256 in bottle block
     PatternPatch::Patch.new(
       regexp: /(^\s*bottle.*sha256 ")[0-9a-f]+/m,
       text: "\\1#{sha}",
@@ -73,8 +74,19 @@ task :bottle do
 
     puts "Updated sha256 for bottle to #{sha}"
 
-    commit_and_push "Bottle for release #{PACKAGE_VERSION} of #{PACKAGE_NAME}", tag: "#{PACKAGE_NAME}-v#{PACKAGE_VERSION}"
+    tag = "#{PACKAGE_NAME}-v#{PACKAGE_VERSION}"
+    commit_and_push "Bottle for release #{PACKAGE_VERSION} of #{PACKAGE_NAME}", tag: tag
 
+    # TODO: Determine OS release name from original bottle name/DSL and account
+    # when patching the formula as well. For now, assume mojave.
+    release_bottle_name = "#{PACKAGE_NAME}-#{PACKAGE_VERSION}.mojave.bottle.tar.gz"
+
+    # rename bottle
+    FileUtils.mv bottle, release_bottle_name
+
+    puts "Bottle is #{release_bottle_name}."
+
+    # TODO: Create GitHub release from tag
     # TODO: Post bottle as an attachment to the release on GitHub
     # TODO: Remove bottle after successful POST
   end
