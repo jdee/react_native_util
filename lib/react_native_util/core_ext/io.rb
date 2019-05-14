@@ -1,3 +1,4 @@
+require 'colored'
 require 'shellwords'
 require 'time'
 require_relative 'string'

@@ -55,6 +55,115 @@ module ReactNativeUtil
     # @raise ExecutionError on generic command failure
     # @raise Errno::ENOENT if a required command is not present
     def convert_to_react_pod!
+      startup!
+
+      if project.libraries_group.nil?
+        log "Libraries group not found in #{xcodeproj_path}. No conversion necessary."
+        return
+      end
+
+      if File.exist? podfile_path
+        log "Podfile already present at #{File.expand_path podfile_path}.".red.bold
+        log "A future release of #{NAME} may support integration with an existing Podfile."
+        log 'This release can only convert apps that do not currently use a Podfile.'
+        exit 1
+      end
+
+      # Not used at the moment
+      # load_react_podspec!
+
+      # 1. Detect native dependencies in Libraries group.
+      log 'Dependencies:'
+      project.dependencies.each { |d| log " #{d}" }
+
+      # Save for after Libraries removed.
+      deps_to_add = project.dependencies
+
+      # 2. Run react-native unlink for each one.
+      log 'Unlinking dependencies'
+      project.dependencies.each do |dep|
+        run_command_with_spinner! 'react-native', 'unlink', dep, log: File.join(Dir.tmpdir, "react-native-unlink-#{dep}.log")
+      end
+
+      # reload after react-native unlink
+      load_xcodeproj!
+      load_react_project!
+
+      # 3. Add Start Packager script
+      project.add_packager_script_from react_project
+
+      # 4. Generate boilerplate Podfile.
+      generate_podfile!
+
+      # 5. Remove Libraries group from Xcode project.
+      project.remove_libraries_group
+      project.save
+
+      # 6. Run react-native link for each dependency (adds to Podfile).
+      log 'Linking dependencies'
+      deps_to_add.each do |dep|
+        run_command_with_spinner! 'react-native', 'link', dep, log: File.join(Dir.tmpdir, "react-native-link-#{dep}.log")
+      end
+
+      # 7. pod install
+      log "Generating Pods project and ios/#{app_name}.xcworkspace"
+      command = %w[pod install]
+      command << '--repo-update' if options[:repo_update]
+      run_command_with_spinner!(*command, chdir: 'ios', log: File.join(Dir.tmpdir, 'pod-install.log'))
+
+      log 'Conversion complete ✅'
+
+      # 8. Open workspace/build
+      execute 'open', File.join('ios', "#{app_name}.xcworkspace")
+
+      # 9. TODO: SCM/git (add, commit - optional)
+    end
+
+    def update_project!
+      startup!
+
+      unless project.libraries_group.nil?
+        raise ConversionError, "Libraries group present in #{xcodeproj_path}. Conversion necessary. Run rn react_pod without -u."
+      end
+
+      unless File.exist? podfile_path
+        raise ConversionError, "#{podfile_path} not found. Conversion necessary. Run rn react_pod without -u."
+      end
+
+      log "Updating project at #{xcodeproj_path}"
+
+      # Check/update the contents of the packager script in React.xcodeproj
+      load_react_project!
+
+      current_script_phase = project.packager_phase
+
+      # Not an error. User may have removed it.
+      log "Packager build phase not found in #{xcodeproj_path}. Not updating.".yellow and return if current_script_phase.nil?
+
+      new_script_phase = react_project.packager_phase
+      # Totally unexpected. Exception. TODO: This is not treated as an error on conversion. Probably should be.
+      raise ConversionError, "Packager build phase not found in #{react_project.path}." if new_script_phase.nil?
+
+      new_script = new_script_phase.shell_script.gsub %r{../scripts}, '../node_modules/react-native/scripts'
+
+      if new_script == current_script_phase.shell_script && new_script_phase.name == current_script_phase.name
+        log "#{current_script_phase.name} build phase up to date. ✅"
+        return
+      end
+
+      log 'Updating packager phase.'
+      log " Current name: #{current_script_phase.name}"
+      log " New name    : #{new_script_phase.name}"
+
+      current_script_phase.name = new_script_phase.name
+      current_script_phase.shell_script = new_script
+
+      project.save
+
+      log "Updated #{xcodeproj_path} ✅"
+    end
+
+    def startup!
       validate_commands! REQUIRED_COMMANDS
 
       # Make sure no uncommitted changes
@@ -68,73 +177,12 @@ module ReactNativeUtil
       log 'package.json:'
       log " app name: #{app_name.inspect}"
 
-      # 1. Detect project. TODO: Add an option to override.
+      # Detect project. TODO: Add an option to override.
       @xcodeproj_path = File.expand_path "ios/#{app_name}.xcodeproj"
       load_xcodeproj!
       log "Found Xcode project at #{xcodeproj_path}"
 
-      if project.libraries_group.nil?
-        log "Libraries group not found in #{xcodeproj_path}. No conversion necessary."
-        exit 0
-      end
-
-      if File.exist? podfile_path
-        log "Podfile already present at #{File.expand_path podfile_path}.".red.bold
-        log "A future release of #{NAME} may support integration with an existing Podfile."
-        log 'This release can only convert apps that do not currently use a Podfile.'
-        exit 1
-      end
-
       project.validate_app_target!
-
-      # Not used at the moment
-      # load_react_podspec!
-
-      # 2. Detect native dependencies in Libraries group.
-      log 'Dependencies:'
-      project.dependencies.each { |d| log " #{d}" }
-
-      # Save for after Libraries removed.
-      deps_to_add = project.dependencies
-
-      # 3. Run react-native unlink for each one.
-      log 'Unlinking dependencies'
-      project.dependencies.each do |dep|
-        run_command_with_spinner! 'react-native', 'unlink', dep, log: File.join(Dir.tmpdir, "react-native-unlink-#{dep}.log")
-      end
-
-      # reload after react-native unlink
-      load_xcodeproj!
-      load_react_project!
-
-      # 4. Add Start Packager script
-      project.add_packager_script_from react_project
-
-      # 5. Generate boilerplate Podfile.
-      generate_podfile!
-
-      # 6. Remove Libraries group from Xcode project.
-      project.remove_libraries_group
-      project.save
-
-      # 7. Run react-native link for each dependency (adds to Podfile).
-      log 'Linking dependencies'
-      deps_to_add.each do |dep|
-        run_command_with_spinner! 'react-native', 'link', dep, log: File.join(Dir.tmpdir, "react-native-link-#{dep}.log")
-      end
-
-      # 8. pod install
-      log "Generating Pods project and ios/#{app_name}.xcworkspace"
-      command = %w[pod install]
-      command << '--repo-update' if options[:repo_update]
-      run_command_with_spinner!(*command, chdir: 'ios', log: File.join(Dir.tmpdir, 'pod-install.log'))
-
-      log 'Conversion complete ✅'
-
-      # 9. Open workspace/build
-      execute 'open', File.join('ios', "#{app_name}.xcworkspace")
-
-      # 10. TODO: SCM/git (add, commit - optional)
     end
 
     # Read the contents of ./package.json into @package_json
