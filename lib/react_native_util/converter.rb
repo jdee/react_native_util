@@ -87,7 +87,8 @@ module ReactNativeUtil
 
       project.validate_app_target!
 
-      load_react_podspec!
+      # Not used at the moment
+      # load_react_podspec!
 
       # 2. Detect native dependencies in Libraries group.
       log 'Dependencies:'
