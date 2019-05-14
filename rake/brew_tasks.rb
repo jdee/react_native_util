@@ -1,5 +1,4 @@
 require 'fileutils'
-require 'pattern_patch'
 require 'tty/spinner'
 require_relative '../lib/react_native_util/metadata'
 
@@ -78,10 +77,11 @@ task :bottle do
     tag = "#{PACKAGE_NAME}-v#{PACKAGE_VERSION}"
     commit_and_push "Bottle for release #{PACKAGE_VERSION} of #{PACKAGE_NAME}", tag: tag
 
+    # TODO: Determine OS release name from original bottle name/DSL and account
+    # when patching the formula as well. For now, assume mojave.
     release_bottle_name = "#{PACKAGE_NAME}-#{PACKAGE_VERSION}.mojave.bottle.tar.gz"
 
     # rename bottle
-    # TODO: Determine OS release name.
     FileUtils.mv bottle, release_bottle_name
 
     puts "Bottle is #{release_bottle_name}."

@@ -1,4 +1,3 @@
-require 'pattern_patch'
 require 'rubygems'
 require_relative '../lib/react_native_util/metadata'
 
