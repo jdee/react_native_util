@@ -1,3 +1,4 @@
+require 'fileutils'
 require 'pattern_patch'
 require 'tty/spinner'
 require_relative '../lib/react_native_util/metadata'
@@ -63,6 +64,7 @@ task :bottle do
     sh 'brew', 'install', '--build-bottle', PACKAGE_NAME
     output = capture_with_spinner "brew bottle #{PACKAGE_NAME}"
     sha = output.split("\n").grep(/sha256/).first.sub(/^\s*sha256\s+"([0-9a-f]+).*$/, '\1')
+    bottle = output.split("\n").grep(/^\.#{PACKAGE_NAME}-/).first
 
     # Replace second occurrence of sha256 in bottle block
     PatternPatch::Patch.new(
@@ -75,6 +77,14 @@ task :bottle do
 
     tag = "#{PACKAGE_NAME}-v#{PACKAGE_VERSION}"
     commit_and_push "Bottle for release #{PACKAGE_VERSION} of #{PACKAGE_NAME}", tag: tag
+
+    release_bottle_name = "#{PACKAGE_NAME}-#{PACKAGE_VERSION}.mojave.bottle.tar.gz"
+
+    # rename bottle
+    # TODO: Determine OS release name.
+    FileUtils.mv bottle, release_bottle_name
+
+    puts "Bottle is #{release_bottle_name}."
 
     # TODO: Create GitHub release from tag
     # TODO: Post bottle as an attachment to the release on GitHub
