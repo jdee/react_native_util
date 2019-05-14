@@ -130,6 +130,8 @@ module ReactNativeUtil
         raise ConversionError, "#{podfile_path} not found. Conversion necessary. Run rn react_pod without -u."
       end
 
+      log "Updating project at #{xcodeproj_path}"
+
       # Check/update the contents of the packager script in React.xcodeproj
       load_react_project!
 
