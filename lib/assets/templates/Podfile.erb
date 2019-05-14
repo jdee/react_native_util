@@ -7,7 +7,7 @@ target '<%= app_name %>' do
       Core
       CxxBridge
       DevSupport
-      <%= @subspecs_from_libraries.join("\n      ") %>
+      <%= app_target.subspecs_from_libraries.join("\n      ") %>
     ]
   pod 'yoga', path: '../node_modules/react-native/ReactCommon/yoga'
   pod 'Folly', podspec: '../node_modules/react-native/third-party-podspecs/Folly.podspec'
@@ -18,7 +18,7 @@ end
 
 <% if test_target %>
 target '<%= test_target.name %>' do
-  pod 'React', path: '../node_modules/react-native', subspecs: %w[Core CxxBridge]
+  pod 'React', path: '../node_modules/react-native', subspecs: <%= (%w[Core CxxBridge] + test_target.subspecs_from_libraries).inspect %>
   pod 'yoga', path: '../node_modules/react-native/ReactCommon/yoga'
   pod 'Folly', podspec: '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 end

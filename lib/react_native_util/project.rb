@@ -1,4 +1,4 @@
-require 'xcodeproj'
+require_relative 'core_ext/xcodeproj'
 require_relative 'util'
 
 module ReactNativeUtil
