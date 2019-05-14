@@ -17,5 +17,5 @@ task :bump, %i[version] do |_task, opts|
 
   patch(:version).apply 'lib/react_native_util/metadata.rb', binding: binding
 
-  # sh 'git', 'commit', "-qmVersion bump to #{version}", 'lib/react_native_util/metadata.rb'
+  sh 'git', 'commit', "-qmVersion bump to #{version}", 'lib/react_native_util/metadata.rb'
 end
