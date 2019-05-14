@@ -1,7 +1,7 @@
 # Conversion tools for React Native projects
 module ReactNativeUtil
   NAME = 'react_native_util'
-  VERSION = '0.3.3'
+  VERSION = '0.4.0'
   SUMMARY = 'Community utility CLI for React Native projects'
   DESCRIPTION = 'Converts a project created with react-native init to use CocoaPods with the ' \
                 'React pod from node_modules. This preserves compatibility with ' \
