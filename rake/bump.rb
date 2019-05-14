@@ -15,11 +15,7 @@ task :bump, %i[version] do |_task, opts|
 
   puts "Bumping to v#{version}"
 
-  PatternPatch::Patch.new(
-    regexp: /(VERSION = ')[^']+/,
-    text: "\\1#{version}",
-    mode: :replace
-  ).apply 'lib/react_native_util/metadata.rb'
+  patch(:version).apply 'lib/react_native_util/metadata.rb', binding: binding
 
-  sh 'git', 'commit', "-qmVersion bump to #{version}", 'lib/react_native_util/metadata.rb'
+  # sh 'git', 'commit', "-qmVersion bump to #{version}", 'lib/react_native_util/metadata.rb'
 end

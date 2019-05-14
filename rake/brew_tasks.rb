@@ -33,11 +33,8 @@ desc 'Release to Homebrew tap'
 task :brew do
   Dir.chdir '../homebrew-tap' do
     # Update version number in formula
-    PatternPatch::Patch.new(
-      regexp: /(VERSION = ')[^']+/,
-      text: "\\1#{PACKAGE_VERSION}",
-      mode: :replace
-    ).apply FORMULA
+    version = PACKAGE_VERSION
+    patch(:version).apply FORMULA, binding: binding
     puts "Updated formula to v#{PACKAGE_VERSION}"
 
     # This command fails because of the mismatch. We want to capture the output
