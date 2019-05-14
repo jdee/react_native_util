@@ -144,8 +144,7 @@ module ReactNativeUtil
       # Totally unexpected. Exception. TODO: This is not treated as an error on conversion. Probably should be.
       raise ConversionError, "Packager build phase not found in #{react_project.path}." if new_script_phase.nil?
 
-      new_script = new_script_phase.shell_script
-      new_script.gsub! %r{../scripts}, '../node_modules/react-native/scripts'
+      new_script = new_script_phase.shell_script.gsub %r{../scripts}, '../node_modules/react-native/scripts'
 
       if new_script == current_script_phase.shell_script && new_script_phase.name == current_script_phase.name
         log "#{current_script_phase.name} build phase up to date. ✅"
