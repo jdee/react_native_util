@@ -125,6 +125,14 @@ _Typical command output:_
 2019-05-12T15:38:12-07:00 $ open ios/TestApp.xcworkspace
 ```
 
+## Convert your own app with Rake
+
+From this repo:
+
+```bash
+bundle exec rake react_pod[/path/to/your/app]
+```
+
 ## Rake task
 
 Add to Rakefile:
