@@ -63,7 +63,7 @@ task :bottle do
     sh 'brew', 'install', '--build-bottle', PACKAGE_NAME
     output = capture_with_spinner "brew bottle #{PACKAGE_NAME}"
     sha = output.split("\n").grep(/sha256/).first.sub(/^\s*sha256\s+"([0-9a-f]+).*$/, '\1')
-    bottle = output.split("\n").grep(/^\.#{PACKAGE_NAME}-/).first
+    bottle = output.split("\n").grep(%r{^\./#{PACKAGE_NAME}-}).first
 
     # Replace second occurrence of sha256 in bottle block
     PatternPatch::Patch.new(
