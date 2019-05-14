@@ -27,12 +27,17 @@ automatically via a Run Script build phase in the Xcode project. This is an
 alternative to performing manual surgery on a project in Xcode.
 DESC
 
+        c.option '-u', '--[no-]update', 'Update a previously converted project (default: convert)'
         c.option '--[no-]repo-update', 'Update the local podspec repo (default: update; env. var. REACT_NATIVE_UTIL_REPO_UPDATE)'
 
         c.action do |_args, opts|
           begin
             converter = Converter.new repo_update: opts.repo_update
-            converter.convert_to_react_pod!
+            if opts.update
+              converter.update_project!
+            else
+              converter.convert_to_react_pod!
+            end
             exit 0
           rescue ExecutionError => e
             # Generic command failure.

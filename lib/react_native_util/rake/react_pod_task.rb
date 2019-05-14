@@ -17,13 +17,21 @@ module ReactNativeUtil
         name = :react_pod,
         description = 'Convert project to use React pod',
         chdir: '.',
-        repo_update: boolean_env_var?(:REACT_NATIVE_UTIL_REPO_UPDATE)
+        repo_update: boolean_env_var?(:REACT_NATIVE_UTIL_REPO_UPDATE, default_value: true)
       )
         desc description
         task name, %i[path] do |_task, opts|
           project_dir = opts[:path] || chdir
           Dir.chdir project_dir do
             Converter.new(repo_update: repo_update).convert_to_react_pod!
+          end
+        end
+
+        desc 'Update project'
+        task "#{name}:update", %i[path] do |_task, opts|
+          project_dir = opts[:path] || chdir
+          Dir.chdir project_dir do
+            Converter.new(repo_update: repo_update).update_project!
           end
         end
       end
