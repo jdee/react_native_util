@@ -72,6 +72,35 @@ rn -h
 rn react_pod -h
 ```
 
+## react_pod command
+
+Converts a React Native Xcode project to use the React pod from node_modules
+instead of the projects in the Libraries group. This makes it easier to manage
+native dependencies while preserving compatibility with `react-native link`.
+The command looks for your app's package.json in the current directory and
+expects your Xcode project to be located under the ios subdirectory and have
+the name specified for your app in package.json. If a Podfile is found in the
+ios subdirectory, the conversion will fail.
+
+The React.xcodeproj in the Libraries group of a project created by
+`react-native init` automatically starts the Metro packager via a Run Script
+build phase. When the react_pod command removes the Libraries group from your
+app project, it adds an equivalent build phase to your app project so that the
+packager will automatically be started when necessary by Xcode.
+
+Use the `-u` or `--update` option to update the packager script after
+updating React Native, in case the packager script on the React.xcodeproj changes
+after it's removed from your project.
+
+### Options
+
+|option|description|env. var.|
+|------|-----------|---------|
+|-h, --help|Print command help||
+|-t, --trace|Print a stack trace in case of error||
+|-u, --update|Update a previously converted project||
+|--[no-]repo-update|Don't update the local podspec repo|REACT_NATIVE_UTIL_REPO_UPDATE|
+
 ## Try it out
 
 Convert examples/TestApp.
@@ -151,6 +180,7 @@ require 'react_native_util/rake'
 ReactNativeUtil::Rake::ReactPodTask.new(
   :react_pod,                         # task name
   'Convert project to use React pod', # description
+  'Update project',                   # description for :update task
   chdir: '/path/to/rn/project',       # path to project package.json
   repo_update: true                   # optionally disable pod repo update
 )
@@ -161,6 +191,16 @@ Override `chdir` at the command line:
 rake react_pod[/path/to/another/rn/project]
 ```
 
+Convert project:
+```bash
+rake react_pod
+```
+
+Update converted project:
+```bash
+rake react_pod:update
+```
+
 ## Ruby script
 
 ```Ruby
@@ -168,7 +208,13 @@ require 'react_native_util/converter'
 
 Dir.chdir '/path/to/rn/project' do
   begin
-    ReactNativeUtil::Converter.new(repo_update: true).convert_to_react_pod!
+    converter = ReactNativeUtil::Converter.new(repo_update: true)
+
+    # Convert a project to use the React pod
+    converter.convert_to_react_pod!
+
+    # Update a converted project
+    converter.update_project!
   rescue ReactNativeUtil::BaseException => e
     puts "Error from #convert_to_react_pod!: #{e.message}"
   end

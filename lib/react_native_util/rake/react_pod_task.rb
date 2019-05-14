@@ -16,6 +16,7 @@ module ReactNativeUtil
       def initialize(
         name = :react_pod,
         description = 'Convert project to use React pod',
+        update_description = 'Update project',
         chdir: '.',
         repo_update: boolean_env_var?(:REACT_NATIVE_UTIL_REPO_UPDATE, default_value: true)
       )
@@ -27,7 +28,7 @@ module ReactNativeUtil
           end
         end
 
-        desc 'Update project'
+        desc update_description
         task "#{name}:update", %i[path] do |_task, opts|
           project_dir = opts[:path] || chdir
           Dir.chdir project_dir do
