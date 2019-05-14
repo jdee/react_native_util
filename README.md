@@ -144,6 +144,11 @@ ReactNativeUtil::Rake::ReactPodTask.new(
 )
 ```
 
+Override `chdir` at the command line:
+```bash
+rake react_pod[/path/to/another/rn/project]
+```
+
 ## Ruby script
 
 ```Ruby
