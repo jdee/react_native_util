@@ -152,7 +152,7 @@ module ReactNativeUtil
 
       log 'Updating packager phase.'
       log " Current name: #{current_script_phase.name}"
-      log " New name    : #{current_script_phase.name}"
+      log " New name    : #{new_script_phase.name}"
 
       current_script_phase.name = new_script_phase.name
       current_script_phase.shell_script = new_script
