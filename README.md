@@ -53,6 +53,11 @@ brew install react-native-cli
 brew install jdee/tap/react_native_util
 ```
 
+Include react-native-cli from Homebrew:
+```bash
+brew install jdee/tap/react_native_util --with-react-native-cli
+```
+
 ## Gemfile
 
 ```Ruby
