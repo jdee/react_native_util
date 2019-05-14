@@ -1,4 +1,3 @@
-require 'colored'
 require 'tmpdir'
 require 'tty/platform'
 require 'tty/spinner'
@@ -18,15 +17,16 @@ module ReactNativeUtil
     def run_command_with_spinner!(*command, log: nil, chdir: nil)
       STDOUT.flush
       STDERR.flush
+
       spinner = TTY::Spinner.new "[:spinner] #{command.shelljoin}", format: :flip
       spinner.auto_spin
+
       start_time = Time.now
       execute(*command, log: nil, output: log, chdir: chdir)
-      elapsed = Time.now - start_time
-      spinner.success "success in #{format('%.1f', elapsed)} s"
+
+      spinner.success "success in #{elapsed_from start_time} s"
     rescue ExecutionError
-      elapsed = Time.now - start_time
-      spinner.error "failure in #{format('%.1f', elapsed)} s"
+      spinner.error "failure in #{elapsed_from start_time} s"
       STDOUT.log "See #{log} for details." if log && log.kind_of?(String)
       raise
     end
@@ -49,6 +49,10 @@ module ReactNativeUtil
       raise ExecutionError, "#{command.shelljoin}: #{$?}" unless $?.success?
 
       nil
+    end
+
+    def elapsed_from(time)
+      format('%.1f', Time.now - time)
     end
 
     # Return a Boolean value associated with an environment variable.
