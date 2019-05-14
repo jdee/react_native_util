@@ -216,7 +216,7 @@ Dir.chdir '/path/to/rn/project' do
     # Update a converted project
     converter.update_project!
   rescue ReactNativeUtil::BaseException => e
-    puts "Error from #convert_to_react_pod!: #{e.message}"
+    puts "Error from ReactNativeUtil::Converter: #{e.message}"
   end
 end
 ```
