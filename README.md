@@ -128,7 +128,7 @@ git status
 
 _Typical command output:_
 ```
-2019-05-14T12:30:50-07:00 react_native_util react_pod v0.4.0
+2019-05-14T12:30:50-07:00 react_native_util react_pod v0.5.0
 2019-05-14T12:30:52-07:00  Darwin 18.5.0 x86_64
 2019-05-14T12:30:52-07:00  Ruby 2.3.7: ~/.rvm/rubies/ruby-2.3.7/bin/ruby
 2019-05-14T12:30:52-07:00  RubyGems 3.0.3: ~/.rvm/rubies/ruby-2.3.7/bin/gem
