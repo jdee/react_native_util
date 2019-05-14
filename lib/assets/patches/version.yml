@@ -1,0 +1,3 @@
+regexp: "(VERSION = ['\"])[^'\"]+"
+text: '\1<%= version %>'
+mode: replace
