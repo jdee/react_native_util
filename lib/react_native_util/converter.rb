@@ -122,6 +122,14 @@ module ReactNativeUtil
     def update_project!
       startup!
 
+      unless project.libraries_group.nil?
+        raise ConversionError, "Libraries group present in #{xcodeproj_path}. Conversion necessary. Run rn react_pod without -u."
+      end
+
+      unless File.exist? podfile_path
+        raise ConversionError, "#{podfile_path} not found. Conversion necessary. Run rn react_pod without -u."
+      end
+
       # Check/update the contents of the packager script in React.xcodeproj
       load_react_project!
 
@@ -147,7 +155,7 @@ module ReactNativeUtil
       log " New name    : #{current_script_phase.name}"
 
       current_script_phase.name = new_script_phase.name
-      current_script_phase.shell_script = new_script_phase.shell_script
+      current_script_phase.shell_script = new_script
 
       project.save
 
