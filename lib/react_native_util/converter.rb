@@ -106,27 +106,23 @@ module ReactNativeUtil
       load_xcodeproj!
       load_react_project!
 
-      # 4a. Add Start Packager script
+      # 4. Add Start Packager script
       project.add_packager_script_from react_project
-
-      # Make a note of pod subspecs to replace Libraries group
-      load_subspecs_from_libraries
-
-      # 4b. Remove Libraries group from Xcode project.
-      project.remove_libraries_group
-
-      project.save
 
       # 5. Generate boilerplate Podfile.
       generate_podfile!
 
-      # 6. Run react-native link for each dependency.
+      # 6. Remove Libraries group from Xcode project.
+      project.remove_libraries_group
+      project.save
+
+      # 7. Run react-native link for each dependency (adds to Podfile).
       log 'Linking dependencies'
       deps_to_add.each do |dep|
         run_command_with_spinner! 'react-native', 'link', dep, log: File.join(Dir.tmpdir, "react-native-link-#{dep}.log")
       end
 
-      # 7. pod install
+      # 8. pod install
       log "Generating Pods project and ios/#{app_name}.xcworkspace"
       command = %w[pod install]
       command << '--repo-update' if options[:repo_update]
@@ -134,10 +130,10 @@ module ReactNativeUtil
 
       log 'Conversion complete ✅'
 
-      # 8. SCM/git (add, commit - optional)
-
       # 9. Open workspace/build
       execute 'open', File.join('ios', "#{app_name}.xcworkspace")
+
+      # 10. TODO: SCM/git (add, commit - optional)
     end
 
     # Read the contents of ./package.json into @package_json
@@ -225,18 +221,6 @@ module ReactNativeUtil
       # rubocop: disable Security/Eval
       @react_podspec = eval(podspec_contents)
       # rubocop: enable Security/Eval
-    end
-
-    def load_subspecs_from_libraries
-      roots = project.library_roots - %w[React]
-      @subspecs_from_libraries = roots.select { |r| Project::DEFAULT_DEPENDENCIES.include?(r) }.map do |root|
-        case root
-        when 'RCTLinking'
-          'RCTLinkingIOS'
-        else
-          root
-        end
-      end
     end
 
     # The name of the app as specified in package.json
