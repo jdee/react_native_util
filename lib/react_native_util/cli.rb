@@ -1,6 +1,5 @@
 require 'commander'
 require_relative 'converter'
-require_relative 'metadata'
 
 module ReactNativeUtil
   class CLI

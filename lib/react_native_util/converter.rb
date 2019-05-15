@@ -2,6 +2,7 @@ require 'cocoapods-core'
 require 'erb'
 require 'json'
 require 'rubygems'
+require_relative 'metadata'
 require_relative 'project'
 
 module ReactNativeUtil

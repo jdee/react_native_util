@@ -64,6 +64,13 @@ brew install jdee/tap/react_native_util --with-react-native-cli
 gem 'react_native_util'
 ```
 
+## Fastlane
+
+See https://github.com/jdee/fastlane-plugin-react_native_util
+```bash
+fastlane add_plugin react_native_util
+```
+
 ## Usage
 
 ```bash
