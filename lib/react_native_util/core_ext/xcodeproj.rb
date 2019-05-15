@@ -18,7 +18,7 @@ module Xcodeproj
 
             # project is a ReactNativeUtil::Project
             # #static_libs is from the Libraries group
-            project.static_libs.include?(path)
+            project.static_libs(platform_name).include?(path)
           end
 
           react_project_subspecs = %w[Core CxxBridge DevSupport]
@@ -26,6 +26,7 @@ module Xcodeproj
 
           react_project_subspecs + libs.map do |lib|
             root = lib.file_ref.pretty_print.sub(/^lib(.*)\.a$/, '\1')
+            root.sub!(/-tvOS/, '')
 
             case root
             when 'RCTLinking'

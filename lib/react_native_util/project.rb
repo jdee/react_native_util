@@ -70,6 +70,10 @@ module ReactNativeUtil
         path = file.file_ref.pretty_print
         next false unless /^lib(.+)\.a$/.match?(path)
 
+        if target.platform_name == :tvos
+          path = path.sub(/-tvOS\.a$/, '.a')
+        end
+
         static_libs.include?(path)
       end
 
@@ -152,8 +156,15 @@ module ReactNativeUtil
 
     # All static libraries from the Libraries group
     # @return [Array<String>] an array of filenames
-    def static_libs
-      library_roots.map { |root| "lib#{root}.a" }
+    def static_libs(platform = :ios)
+      library_roots.map do |root|
+        case platform
+        when :tvos
+          "lib#{root}-tvOS.a"
+        else
+          "lib#{root}.a"
+        end
+      end
     end
 
     # Returns the original Start Packager build phase (from the React.xcodeproj
