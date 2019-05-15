@@ -19,7 +19,7 @@ end
 
 <% if test_target %>
 target '<%= test_target.name %>' do
-  platform :ios, '<%= test_target.deployment_target %>'
+  platform :ios, '<%= app_target.deployment_target %>'
 
   pod 'React', path: '../node_modules/react-native', subspecs: <%= (%w[Core CxxBridge] + test_target.subspecs_from_libraries).inspect %>
 end
@@ -42,7 +42,7 @@ end
 
 <% if test_target :tvos %>
 target '<%= test_target(:tvos).name %>' do
-  platform :tvos, '<%= test_target(:tvos).deployment_target %>'
+  platform :tvos, '<%= app_target(:tvos).deployment_target %>'
 
   pod 'React', path: '../node_modules/react-native', subspecs: <%= (%w[Core CxxBridge] + test_target(:tvos).subspecs_from_libraries).inspect %>
 end
