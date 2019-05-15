@@ -28,18 +28,17 @@ module ReactNativeUtil
     attr_accessor :app_name
 
     def app_target
-      targets.find { |t| t.name == app_name }
+      targets.find { |t| t.platform_name == :ios && t.product_type == 'com.apple.product-type.application' }
     end
 
     def test_target
-      targets.select(&:test_target_type?).reject { |t| t.name =~ /tvOS/ }.first
+      targets.select(&:test_target_type?).select { |t| t.platform_name == :ios }.first
     end
 
     # Validate an assumption about the project. TODO: Provide override option.
     # @raise ConversionError if an application target is not found with the same name as the project.
     def validate_app_target!
-      raise ConversionError, "Unable to find target #{app_name} in #{path}." if app_target.nil?
-      raise ConversionError, "Target #{app_name} is not an application target." unless app_target.product_type == 'com.apple.product-type.application'
+      raise ConversionError, "Unable to find application target in #{path}." if app_target.nil?
     end
 
     # A representation of the Libraries group (if any) from the Xcode project.
