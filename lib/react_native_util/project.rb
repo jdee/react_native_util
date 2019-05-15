@@ -32,7 +32,7 @@ module ReactNativeUtil
     end
 
     def test_target
-      targets.select(&:test_target_type?).reject { |t| t.name =~ /tvOS/ }.first
+      targets.select(&:test_target_type?).select { |t| t.platform_name == :ios }.first
     end
 
     # Validate an assumption about the project. TODO: Provide override option.

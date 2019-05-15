@@ -16,7 +16,7 @@ describe ReactNativeUtil::Project do
   end
 
   it 'finds a test target' do
-    dummy_test_target = double 'target', name: 'TestAppTests'
+    dummy_test_target = double 'target', name: 'TestAppTests', platform_name: :ios
     expect(dummy_test_target).to receive(:test_target_type?).at_least(:once) { true }
     expect(project).to receive(:targets) { [dummy_test_target] }
 
