@@ -253,4 +253,5 @@ https://www.rubydoc.info/gems/react_native_util.
 
 ## Successfully converted apps:
 
-- https://github.com/azhavrid/movie-swiper
+https://github.com/azhavrid/movie-swiper
+([gist](https://gist.github.com/jdee/58746c8484d508fa318df8642ec99da8))
