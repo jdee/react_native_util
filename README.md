@@ -135,34 +135,39 @@ git status
 
 _Typical command output:_
 ```
-2019-05-14T12:30:50-07:00 react_native_util react_pod v0.5.0
-2019-05-14T12:30:52-07:00  Darwin 18.5.0 x86_64
-2019-05-14T12:30:52-07:00  Ruby 2.3.7: ~/.rvm/rubies/ruby-2.3.7/bin/ruby
-2019-05-14T12:30:52-07:00  RubyGems 3.0.3: ~/.rvm/rubies/ruby-2.3.7/bin/gem
-2019-05-14T12:30:52-07:00  Bundler 1.17.3: ~/.rvm/gems/ruby-2.3.7/bin/bundle
-2019-05-14T12:30:52-07:00  react-native-cli: ~/.nvm/versions/node/v10.15.0/bin/react-native
-2019-05-14T12:30:52-07:00   react-native-cli: 2.0.1
-2019-05-14T12:30:52-07:00   react-native: 0.59.8
-2019-05-14T12:30:52-07:00  yarn 1.16.0: /usr/local/bin/yarn
-2019-05-14T12:30:53-07:00  cocoapods 1.6.1: ~/.rvm/gems/ruby-2.3.7/bin/pod
-2019-05-14T12:30:53-07:00  cocoapods-core: 1.6.1
-2019-05-14T12:30:53-07:00 package.json:
-2019-05-14T12:30:53-07:00  app name: "TestApp"
-2019-05-14T12:30:53-07:00 Found Xcode project at ~/github/jdee/react_native_util/examples/TestApp/ios/TestApp.xcodeproj
-2019-05-14T12:30:53-07:00 Dependencies:
-2019-05-14T12:30:53-07:00  react-native-webview
-2019-05-14T12:30:53-07:00 Unlinking dependencies
+2019-05-14T19:21:36-07:00 react_native_util react_pod v0.5.1
+2019-05-14T19:21:37-07:00  Darwin 18.5.0 x86_64
+2019-05-14T19:21:37-07:00  Ruby 2.6.3: ~/.rvm/rubies/ruby-2.6.3/bin/ruby
+2019-05-14T19:21:37-07:00  RubyGems 3.0.3: ~/.rvm/rubies/ruby-2.6.3/bin/gem
+2019-05-14T19:21:37-07:00  Bundler 2.0.1: ~/.rvm/gems/ruby-2.6.3/bin/bundle
+2019-05-14T19:21:37-07:00  react-native-cli: ~/.nvm/versions/node/v10.15.0/bin/react-native
+2019-05-14T19:21:37-07:00   react-native-cli: 2.0.1
+2019-05-14T19:21:37-07:00   react-native: 0.59.8
+2019-05-14T19:21:38-07:00  yarn 1.16.0: /usr/local/bin/yarn
+2019-05-14T19:21:38-07:00  cocoapods 1.6.1: ~/.rvm/gems/ruby-2.6.3/bin/pod
+2019-05-14T19:21:38-07:00  cocoapods-core: 1.6.1
+2019-05-14T19:21:38-07:00 package.json:
+2019-05-14T19:21:38-07:00  app name: "TestApp"
+2019-05-14T19:21:38-07:00 Found Xcode project at ~/github/$USER/react_native_util/examples/TestApp/ios/TestApp.xcodeproj
+2019-05-14T19:21:38-07:00 Dependencies:
+2019-05-14T19:21:38-07:00  react-native-webview
+2019-05-14T19:21:38-07:00 Unlinking dependencies
 [✔] react-native unlink react-native-webview success in 0.5 s
-2019-05-14T12:30:53-07:00 Generating ios/Podfile
-2019-05-14T12:30:53-07:00 Removing Libraries from TestApp
-2019-05-14T12:30:53-07:00 Removing Libraries from TestAppTests
-2019-05-14T12:30:53-07:00 Removing Libraries group
-2019-05-14T12:30:53-07:00 Linking dependencies
-[✔] react-native link react-native-webview success in 0.6 s
-2019-05-14T12:30:54-07:00 Generating Pods project and ios/TestApp.xcworkspace
-[✔] pod install success in 10.2 s
-2019-05-14T12:31:04-07:00 Conversion complete ✅
-2019-05-14T12:31:04-07:00 $ open ios/TestApp.xcworkspace
+2019-05-14T19:21:39-07:00 Generating ios/Podfile
+2019-05-14T19:21:39-07:00 Removing Libraries from TestApp
+2019-05-14T19:21:39-07:00 Removing Libraries from TestAppTests
+2019-05-14T19:21:39-07:00 Removing Libraries group
+2019-05-14T19:21:39-07:00 Linking dependencies
+[✔] react-native link react-native-webview success in 0.5 s
+2019-05-14T19:21:40-07:00 Generating Pods project and ios/TestApp.xcworkspace
+2019-05-14T19:21:40-07:00 Once pod install is complete, your project will be part of this workspace.
+2019-05-14T19:21:40-07:00 From now on, you should build the workspace with Xcode instead of the project.
+2019-05-14T19:21:40-07:00 Always add the workspace and Podfile.lock to SCM.
+2019-05-14T19:21:40-07:00 It is common practice also to add the Pods directory.
+2019-05-14T19:21:40-07:00 The workspace will be automatically opened when pod install completes.
+[✔] pod install success in 8.6 s
+2019-05-14T19:21:48-07:00 Conversion complete ✅
+2019-05-14T19:21:48-07:00 $ open ios/TestApp.xcworkspace
 ```
 
 ## Convert your own app with Rake
