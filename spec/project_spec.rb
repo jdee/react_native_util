@@ -7,13 +7,12 @@ describe ReactNativeUtil::Project do
   end
 
   it 'finds an app target' do
-    dummy_app_target = double 'target', name: 'TestApp'
+    dummy_app_target = double 'target', name: 'TestApp', product_type: 'com.apple.product-type.application'
     expect(project).to receive(:targets) { [dummy_app_target] }
 
     app_target = project.app_target
 
     expect(app_target).not_to be_nil
-    expect(app_target.name).to eq 'TestApp'
   end
 
   it 'finds a test target' do
