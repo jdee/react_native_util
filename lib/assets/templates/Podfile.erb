@@ -10,7 +10,7 @@ pod 'Folly', podspec: '../node_modules/react-native/third-party-podspecs/Folly.p
 target '<%= app_target.name %>' do
   platform :ios, '<%= app_target.deployment_target %>'
 
-  <%= app_target.podfile_excerpt %>
+<%= app_target.podfile_excerpt %>
 
   # --- react-native link adds pods below this line. ---
 
@@ -20,7 +20,7 @@ end
 target '<%= test_target.name %>' do
   platform :ios, '<%= app_target.deployment_target %>'
 
-  <%= test_target.podfile_excerpt %>
+<%= test_target.podfile_excerpt %>
 end
 <% end %>
 
@@ -28,7 +28,7 @@ end
 target '<%= app_target(:tvos).name %>' do
   platform :tvos, '<%= app_target(:tvos).deployment_target %>'
 
-  <%= app_target(:tvos).podfile_excerpt %>
+<%= app_target(:tvos).podfile_excerpt %>
 end
 <% end %>
 
@@ -36,6 +36,6 @@ end
 target '<%= test_target(:tvos).name %>' do
   platform :tvos, '<%= app_target(:tvos).deployment_target %>'
 
-  <%= test_target(:tvos).podfile_excerpt %>
+<%= test_target(:tvos).podfile_excerpt %>
 end
 <% end %>

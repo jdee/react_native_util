@@ -7,7 +7,7 @@ module Xcodeproj
         PODFILE_TARGET_TEMPLATE_PATH = File.expand_path '../../assets/templates/Podfile-target.erb', __dir__
 
         def podfile_excerpt
-          ERB.new(File.read(PODFILE_TARGET_TEMPLATE_PATH), nil, '<>').result binding
+          ERB.new(File.read(PODFILE_TARGET_TEMPLATE_PATH), nil, '-').result binding
         end
 
         def subspecs_from_libraries
