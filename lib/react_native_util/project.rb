@@ -56,7 +56,7 @@ module ReactNativeUtil
         remove_libraries_from_target t
       end
 
-      unless libraries_group.children.empty?
+      unless @remaining_deps.empty?
         log 'Not removing Libraries group. Not empty.'
         return
       end
@@ -74,7 +74,10 @@ module ReactNativeUtil
       end
 
       log "Removing Libraries from #{target.name}" unless to_remove.empty?
-      to_remove.each { |f| target.frameworks_build_phase.remove_build_file f }
+      to_remove.each do |f|
+        target.frameworks_build_phase.remove_build_file f
+        log " Removed #{f.file_ref.pretty_print}"
+      end
     end
 
     # A list of external dependencies from NPM requiring react-native link.
@@ -82,11 +85,15 @@ module ReactNativeUtil
     def dependencies
       return [] if libraries_group.nil?
 
-      dependency_paths.map do |path|
+      dep_paths = dependency_paths.map do |path|
         # Map each path to a Pathname, expanding $(SRCROOT) or ${SRCROOT}
         # SRCROOT = location of the app project: ./ios
         Pathname.new path.gsub(/\$(\(SRCROOT\)|{SRCROOT})/, 'ios')
-      end.select do |pathname|
+      end
+
+      @remaining_deps = dependency_paths - dep_paths
+
+      dep_paths.select do |pathname|
         # Valid if any path component named node_modules
         pathname.each_filename do |path_component|
           break true if path_component == 'node_modules'
@@ -101,6 +108,7 @@ module ReactNativeUtil
 
           node_modules_found = path_component == 'node_modules'
           '' # In case node_modules is the last component
+          # TODO: Then what? Shouldn't happen, of course....
         end
       end
     end
