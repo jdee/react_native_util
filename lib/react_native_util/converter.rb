@@ -297,12 +297,12 @@ module ReactNativeUtil
       @app_name ||= package_json['name']
     end
 
-    def app_target
-      project.app_target
+    def app_target(platform = :ios)
+      project.app_target platform
     end
 
-    def test_target
-      project.test_target
+    def test_target(platform = :ios)
+      project.test_target platform
     end
 
     def podfile_path
@@ -312,7 +312,7 @@ module ReactNativeUtil
     # Generate a Podfile from a template.
     def generate_podfile!
       log "Generating #{podfile_path}"
-      podfile_contents = ERB.new(File.read(PODFILE_TEMPLATE_PATH)).result binding
+      podfile_contents = ERB.new(File.read(PODFILE_TEMPLATE_PATH), nil, '<>').result binding
       File.open podfile_path, 'w' do |file|
         file.write podfile_contents
       end

@@ -1,0 +1,5 @@
+  pod 'React',
+    path: '../node_modules/react-native',
+    subspecs: %w[
+      <%= subspecs_from_libraries.join("\n      ") + "\n" -%>
+    ]
