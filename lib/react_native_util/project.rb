@@ -1,3 +1,5 @@
+require 'pathname'
+
 require_relative 'core_ext/xcodeproj'
 require_relative 'util'
 
@@ -50,8 +52,13 @@ module ReactNativeUtil
     # Remove the Libraries group from the xcodeproj in memory.
     def remove_libraries_group
       # Remove links against these static libraries
-      targets.reject { |t| t.name =~ /-tvOS/ }.each do |t|
+      targets.select { |t| t.platform_name == :ios }.each do |t|
         remove_libraries_from_target t
+      end
+
+      unless (library_roots - DEFAULT_DEPENDENCIES).empty?
+        log 'Libraries group not empty. Not removing.'
+        return
       end
 
       log 'Removing Libraries group'
@@ -59,7 +66,6 @@ module ReactNativeUtil
     end
 
     def remove_libraries_from_target(target)
-      log "Removing Libraries from #{target.name}"
       to_remove = target.frameworks_build_phase.files.select do |file|
         path = file.file_ref.pretty_print
         next false unless /^lib(.+)\.a$/.match?(path)
@@ -67,7 +73,11 @@ module ReactNativeUtil
         static_libs.include?(path)
       end
 
-      to_remove.each { |f| target.frameworks_build_phase.remove_build_file f }
+      log "Removing Libraries from #{target.name}" unless to_remove.empty?
+      to_remove.each do |f|
+        log " Removing #{f.file_ref.pretty_print}"
+        target.frameworks_build_phase.remove_build_file f
+      end
     end
 
     # A list of external dependencies from NPM requiring react-native link.
@@ -76,9 +86,26 @@ module ReactNativeUtil
       return [] if libraries_group.nil?
 
       dependency_paths.map do |path|
-        # Find the root above the ios/*.xcodeproj under node_modules
-        root = File.expand_path '../..', path
-        File.basename root
+        # Map each path to a Pathname, expanding $(SRCROOT) or ${SRCROOT}
+        # SRCROOT = location of the app project: ./ios
+        Pathname.new path.gsub(/\$(\(SRCROOT\)|{SRCROOT})/, 'ios')
+      end.select do |pathname|
+        # Valid if any path component named node_modules
+        pathname.each_filename do |path_component|
+          break true if path_component == 'node_modules'
+
+          false
+        end
+      end.map do |pathname|
+        # Map each selected Pathname to the root immediately under node_modules
+        node_modules_found = false
+        pathname.each_filename do |path_component|
+          break path_component if node_modules_found
+
+          node_modules_found = path_component == 'node_modules'
+          '' # In case node_modules is the last component
+          # TODO: Then what? Shouldn't happen, of course....
+        end
       end
     end
 
