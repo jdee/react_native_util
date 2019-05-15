@@ -21,7 +21,7 @@ module Xcodeproj
             project.static_libs.include?(path)
           end
 
-          libs.map do |lib|
+          %w[Core CxxBridge DevSupport] + libs.map do |lib|
             root = lib.file_ref.pretty_print.sub(/^lib(.*)\.a$/, '\1')
 
             case root
@@ -30,7 +30,7 @@ module Xcodeproj
             else
               root
             end
-          end + %w[Core CxxBridge DevSupport]
+          end
         end
       end
     end
