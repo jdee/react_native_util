@@ -66,7 +66,6 @@ module ReactNativeUtil
     end
 
     def remove_libraries_from_target(target)
-      log "Removing Libraries from #{target.name}"
       to_remove = target.frameworks_build_phase.files.select do |file|
         path = file.file_ref.pretty_print
         next false unless /^lib(.+)\.a$/.match?(path)
@@ -74,6 +73,7 @@ module ReactNativeUtil
         static_libs.include?(path)
       end
 
+      log "Removing Libraries from #{target.name}" unless to_remove.empty?
       to_remove.each { |f| target.frameworks_build_phase.remove_build_file f }
     end
 
