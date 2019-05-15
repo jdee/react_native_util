@@ -1,6 +1,6 @@
-platform :ios, '<%= app_target.deployment_target %>'
-
 target '<%= app_name %>' do
+  platform :ios, '<%= app_target.deployment_target %>'
+
   pod 'React',
     path: '../node_modules/react-native',
     subspecs: %w[
@@ -18,6 +18,8 @@ end
 
 <% if test_target %>
 target '<%= test_target.name %>' do
+  platform :ios, '<%= app_target.deployment_target %>'
+
   pod 'React', path: '../node_modules/react-native', subspecs: <%= (%w[Core CxxBridge] + test_target.subspecs_from_libraries).inspect %>
   pod 'yoga', path: '../node_modules/react-native/ReactCommon/yoga'
   pod 'Folly', podspec: '../node_modules/react-native/third-party-podspecs/Folly.podspec'
