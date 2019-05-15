@@ -73,23 +73,23 @@ module ReactNativeUtil
 
     # Remove the Libraries group from the xcodeproj in memory.
     def remove_libraries_group
-      # Remove links against these static libraries
+      # Remove links against these static libraries from iOS targets
       targets.select { |t| t.platform_name == :ios }.each do |t|
         remove_libraries_from_target t
       end
 
+      # Remove any unused projects from the Libraries group
       library_roots.each do |root|
-        unless targets_linking_with(root).empty?
-          log "#{root}.xcodeproj still in use by #{targets_linking_with(root).inspect}"
-          next
-        end
+        next unless targets_linking_with(root).empty?
 
-        # Remove this lib from the Libraries group
+        # Remove this lib from the Libraries group. Nothing is linking against it
+        # anymore.
         child = libraries_group.children.find { |c| c.path =~ /#{root}\.xcodeproj/ }
         log "Removing #{root}.xcodeproj from Libraries group."
         child.remove_from_project
       end
 
+      # Remove the Libraries group if it's empty. Or report that it's not.
       unless library_roots.empty?
         log 'Libraries group not empty. Not removing.'
         return
