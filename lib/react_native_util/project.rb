@@ -56,6 +56,11 @@ module ReactNativeUtil
         remove_libraries_from_target t
       end
 
+      unless libraries_group.children.empty?
+        log 'Not removing Libraries group. Not empty.'
+        return
+      end
+
       log 'Removing Libraries group'
       libraries_group.remove_from_project
     end
