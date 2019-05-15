@@ -1,3 +1,5 @@
+require 'pathname'
+
 require_relative 'core_ext/xcodeproj'
 require_relative 'util'
 
@@ -76,9 +78,25 @@ module ReactNativeUtil
       return [] if libraries_group.nil?
 
       dependency_paths.map do |path|
-        # Find the root above the ios/*.xcodeproj under node_modules
-        root = File.expand_path '../..', path
-        File.basename root
+        # Map each path to a Pathname, expanding $(SRCROOT) or ${SRCROOT}
+        # SRCROOT = location of the app project: ./ios
+        Pathname.new path.gsub(/\$(\(SRCROOT\)|{SRCROOT})/, 'ios')
+      end.select do |pathname|
+        # Valid if any path component named node_modules
+        pathname.each_filename do |path_component|
+          break true if path_component == 'node_modules'
+
+          false
+        end
+      end.map do |pathname|
+        # Map each selected Pathname to the root immediately under node_modules
+        node_modules_found = false
+        pathname.each_filename do |path_component|
+          break path_component if node_modules_found
+
+          node_modules_found = path_component == 'node_modules'
+          '' # In case node_modules is the last component
+        end
       end
     end
 
