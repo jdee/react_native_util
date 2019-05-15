@@ -21,7 +21,10 @@ module Xcodeproj
             project.static_libs.include?(path)
           end
 
-          %w[Core CxxBridge DevSupport] + libs.map do |lib|
+          react_project_subspecs = %w[Core CxxBridge DevSupport]
+          react_project_subspecs << 'tvOS' if platform_name == :tvos
+
+          react_project_subspecs + libs.map do |lib|
             root = lib.file_ref.pretty_print.sub(/^lib(.*)\.a$/, '\1')
 
             case root
