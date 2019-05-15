@@ -52,12 +52,12 @@ module ReactNativeUtil
     # Remove the Libraries group from the xcodeproj in memory.
     def remove_libraries_group
       # Remove links against these static libraries
-      targets.reject { |t| t.name =~ /-tvOS/ }.each do |t|
+      targets.select { |t| t.platform_name == :ios }.each do |t|
         remove_libraries_from_target t
       end
 
-      unless @remaining_deps.empty?
-        log 'Not removing Libraries group. Not empty.'
+      unless (library_roots - DEFAULT_DEPENDENCIES).empty?
+        log 'Libraries group not empty. Not removing.'
         return
       end
 
@@ -85,15 +85,11 @@ module ReactNativeUtil
     def dependencies
       return [] if libraries_group.nil?
 
-      dep_paths = dependency_paths.map do |path|
+      dependency_paths.map do |path|
         # Map each path to a Pathname, expanding $(SRCROOT) or ${SRCROOT}
         # SRCROOT = location of the app project: ./ios
         Pathname.new path.gsub(/\$(\(SRCROOT\)|{SRCROOT})/, 'ios')
-      end
-
-      @remaining_deps = dependency_paths - dep_paths
-
-      dep_paths.select do |pathname|
+      end.select do |pathname|
         # Valid if any path component named node_modules
         pathname.each_filename do |path_component|
           break true if path_component == 'node_modules'
