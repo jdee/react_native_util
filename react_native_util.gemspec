@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.description   = ReactNativeUtil::DESCRIPTION
   spec.authors       = ['Jimmy Dee']
   spec.email         = ['jgvdthree@gmail.com']
-  spec.homepage      = "https://github.com/jdee/#{ReactNativeUtil::NAME}"
+  spec.homepage      = ReactNativeUtil::GITHUB_REPO
 
   spec.files         = Dir['bin/*', 'lib/**/*'] + %w{README.md LICENSE}
   spec.test_files    = spec.files.grep(/_spec/)

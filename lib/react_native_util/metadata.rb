@@ -8,4 +8,6 @@ module ReactNativeUtil
                 'react-native link. A converted project will still start the Metro packager ' \
                 'automatically via a Run Script build phase in the Xcode project. This is an ' \
                 'alternative to performing manual surgery on a project in Xcode.'
+  GITHUB_ORG  = 'jdee'
+  GITHUB_REPO = "https://github.com/#{GITHUB_ORG}/#{NAME}"
 end
