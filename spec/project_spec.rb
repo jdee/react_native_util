@@ -36,17 +36,7 @@ describe ReactNativeUtil::Project do
       end.to raise_error ReactNativeUtil::ConversionError
     end
 
-    it 'raises for the wrong #product_type' do
-      # Right name, wrong product_type
-      dummy_target = double 'target', platform_name: :ios, product_type: 'foo'
-      expect(project).to receive(:targets).at_least(:once) { [dummy_target] }
-
-      expect do
-        project.validate_app_target!
-      end.to raise_error ReactNativeUtil::ConversionError
-    end
-
-    it 'succeeds with the correct name and product type' do
+    it 'succeeds if an app target is found' do
       dummy_target = double 'target', platform_name: :ios, product_type: 'com.apple.product-type.application'
       expect(project).to receive(:targets).at_least(:once) { [dummy_target] }
 
