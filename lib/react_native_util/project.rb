@@ -29,12 +29,12 @@ module ReactNativeUtil
 
     attr_accessor :app_name
 
-    def app_target
-      targets.find { |t| t.platform_name == :ios && t.product_type == 'com.apple.product-type.application' }
+    def app_target(platform = :ios)
+      targets.find { |t| t.platform_name == platform && t.product_type == 'com.apple.product-type.application' }
     end
 
-    def test_target
-      targets.select(&:test_target_type?).select { |t| t.platform_name == :ios }.first
+    def test_target(platform = :ios)
+      targets.select(&:test_target_type?).select { |t| t.platform_name == platform }.first
     end
 
     # Validate an assumption about the project. TODO: Provide override option.

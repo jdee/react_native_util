@@ -297,12 +297,12 @@ module ReactNativeUtil
       @app_name ||= package_json['name']
     end
 
-    def app_target
-      project.app_target
+    def app_target(platform = :ios)
+      project.app_target platform
     end
 
-    def test_target
-      project.test_target
+    def test_target(platform = :ios)
+      project.test_target platform
     end
 
     def podfile_path
