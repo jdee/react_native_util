@@ -28,7 +28,7 @@ module ReactNativeUtil
     attr_accessor :app_name
 
     def app_target
-      targets.find { |t| t.product_type == 'com.apple.product-type.application' }
+      targets.find { |t| t.platform_name == :ios && t.product_type == 'com.apple.product-type.application' }
     end
 
     def test_target

@@ -7,7 +7,7 @@ describe ReactNativeUtil::Project do
   end
 
   it 'finds an app target' do
-    dummy_app_target = double 'target', name: 'TestApp', product_type: 'com.apple.product-type.application'
+    dummy_app_target = double 'target', platform_name: :ios, product_type: 'com.apple.product-type.application'
     expect(project).to receive(:targets) { [dummy_app_target] }
 
     app_target = project.app_target
@@ -38,7 +38,7 @@ describe ReactNativeUtil::Project do
 
     it 'raises for the wrong #product_type' do
       # Right name, wrong product_type
-      dummy_target = double 'target', name: 'TestApp', product_type: 'foo'
+      dummy_target = double 'target', platform_name: :ios, product_type: 'foo'
       expect(project).to receive(:targets).at_least(:once) { [dummy_target] }
 
       expect do
@@ -47,7 +47,7 @@ describe ReactNativeUtil::Project do
     end
 
     it 'succeeds with the correct name and product type' do
-      dummy_target = double 'target', name: 'TestApp', product_type: 'com.apple.product-type.application'
+      dummy_target = double 'target', platform_name: :ios, product_type: 'com.apple.product-type.application'
       expect(project).to receive(:targets).at_least(:once) { [dummy_target] }
 
       expect do
