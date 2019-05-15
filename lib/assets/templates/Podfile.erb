@@ -9,6 +9,7 @@ target '<%= app_target.name %>' do
   # --- react-native link adds pods below this line. ---
 
 end
+
 <% if test_target %>
 target '<%= test_target.name %>' do
   platform :ios, '<%= app_target.deployment_target %>'
@@ -16,6 +17,7 @@ target '<%= test_target.name %>' do
   <%= test_target.podfile_excerpt %>
 end
 <% end %>
+
 <% if app_target :tvos %>
 target '<%= app_target(:tvos).name %>' do
   platform :tvos, '<%= app_target(:tvos).deployment_target %>'
@@ -23,6 +25,7 @@ target '<%= app_target(:tvos).name %>' do
   <%= app_target(:tvos).podfile_excerpt %>
 end
 <% end %>
+
 <% if test_target :tvos %>
 target '<%= test_target(:tvos).name %>' do
   platform :tvos, '<%= app_target(:tvos).deployment_target %>'
