@@ -119,12 +119,12 @@ module ReactNativeUtil
         run_command_with_spinner! 'pod', 'setup', log: File.join(Dir.tmpdir, 'pod-setup.log')
       end
 
-      log "Generating Pods project and ios/#{app_name}.xcworkspace"
-      log 'Once pod install is complete, your project will be part of this workspace.'
-      log 'From now on, you should build the workspace with Xcode instead of the project.'
-      log 'Always add the workspace and Podfile.lock to SCM.'
-      log 'It is common practice also to add the Pods directory.'
-      log 'The workspace will be automatically opened when pod install completes.'
+      log "Generating Pods project and ios/#{app_name}.xcworkspace".bold
+      log 'Once pod install is complete, your project will be part of this workspace.'.bold
+      log 'From now on, you should build the workspace with Xcode instead of the project.'.bold
+      log 'Always add the workspace and Podfile.lock to SCM.'.bold
+      log 'It is common practice also to add the Pods directory.'.bold
+      log 'The workspace will be automatically opened when pod install completes.'.bold
       command = %w[pod install]
       command << '--repo-update' if options[:repo_update]
       run_command_with_spinner!(*command, chdir: 'ios', log: File.join(Dir.tmpdir, 'pod-install.log'))
