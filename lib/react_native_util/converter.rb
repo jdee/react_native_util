@@ -312,7 +312,7 @@ module ReactNativeUtil
     # Generate a Podfile from a template.
     def generate_podfile!
       log "Generating #{podfile_path}"
-      podfile_contents = ERB.new(File.read(PODFILE_TEMPLATE_PATH)).result binding
+      podfile_contents = ERB.new(File.read(PODFILE_TEMPLATE_PATH), nil, '<>').result binding
       File.open podfile_path, 'w' do |file|
         file.write podfile_contents
       end

@@ -1,0 +1,8 @@
+pod 'React',
+  path: '../node_modules/react-native',
+  subspecs: %w[
+    Core
+    CxxBridge
+    DevSupport
+    <%= subspecs_from_libraries.join("\n      ") %>
+  ]
