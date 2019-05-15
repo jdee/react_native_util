@@ -107,7 +107,24 @@ module ReactNativeUtil
       end
 
       # 7. pod install
-      log "Generating Pods project and ios/#{app_name}.xcworkspace"
+      # TODO: Can this be customized? Is this the only thing I have to look for
+      # in case CocoaPods needs an initial setup? We pull it in as a dependency.
+      # It could be they've never set it up before. Assume if this directory
+      # exists, pod install is possible (possibly with --repo-update).
+      master_podspec_repo_path = File.join ENV['HOME'], '.cocoapods', 'repos', 'master'
+      unless Dir.exist?(master_podspec_repo_path)
+        # The worst thing that can happen is this is equivalent to pod repo update.
+        # But then pod install --repo-update will take very little time.
+        log 'Setting up CocoaPods'
+        run_command_with_spinner! 'pod', 'setup', log: File.join(Dir.tmpdir, 'pod-setup.log')
+      end
+
+      log "Generating Pods project and ios/#{app_name}.xcworkspace".bold.cyan
+      log 'Once pod install is complete, your project will be part of this workspace.'.bold.cyan
+      log 'From now on, you should build the workspace with Xcode instead of the project.'.bold.cyan
+      log 'Always add the workspace and Podfile.lock to SCM.'.bold.cyan
+      log 'It is common practice also to add the Pods directory.'.bold.cyan
+      log 'The workspace will be automatically opened when pod install completes.'.bold.cyan
       command = %w[pod install]
       command << '--repo-update' if options[:repo_update]
       run_command_with_spinner!(*command, chdir: 'ios', log: File.join(Dir.tmpdir, 'pod-install.log'))
@@ -118,6 +135,7 @@ module ReactNativeUtil
       execute 'open', File.join('ios', "#{app_name}.xcworkspace")
 
       # 9. TODO: SCM/git (add, commit - optional)
+      # See https://github.com/jdee/react_native_util/issues/18
     end
 
     def update_project!
