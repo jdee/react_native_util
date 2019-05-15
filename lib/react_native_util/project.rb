@@ -56,13 +56,18 @@ module ReactNativeUtil
         remove_libraries_from_target t
       end
 
-      # unless (library_roots - DEFAULT_DEPENDENCIES).empty?
-      #   log 'Libraries group not empty. Not removing.'
-      #   return
-      # end
+      unless (library_roots - DEFAULT_DEPENDENCIES).empty?
+        log 'Libraries group not empty. Not removing.'
+        return
+      end
 
-      # log 'Removing Libraries group'
-      # libraries_group.remove_from_project
+      unless targets.select { |t| t.platform_name == :tvos }.empty?
+        log 'Libraries group still in use by tvOS targets. Not removing.'
+        return
+      end
+
+      log 'Removing Libraries group.'
+      libraries_group.remove_from_project
     end
 
     def remove_libraries_from_target(target)
