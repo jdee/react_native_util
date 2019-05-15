@@ -49,6 +49,28 @@ module ReactNativeUtil
       self['Libraries']
     end
 
+    def targets_linking_with(root)
+      targets_matching do |r|
+        if root.respond_to?(:include?)
+          root.include? r
+        else
+          r == root
+        end
+      end
+    end
+
+    def targets_matching(&block)
+      targets.reject do |target|
+        libs_from_libraries_group = target.frameworks_build_phase.files.map(&:file_ref).map(&:pretty_print).map do |lib|
+          matches = /^lib(.+)(-tvOS)?\.a$/.match lib
+          next false unless matches
+
+          yield matches[1]
+        end
+        libs_from_libraries_group.empty?
+      end
+    end
+
     # Remove the Libraries group from the xcodeproj in memory.
     def remove_libraries_group
       # Remove links against these static libraries
@@ -56,13 +78,20 @@ module ReactNativeUtil
         remove_libraries_from_target t
       end
 
-      unless (library_roots - DEFAULT_DEPENDENCIES).empty?
-        log 'Libraries group not empty. Not removing.'
-        return
+      library_roots.each do |root|
+        unless targets_linking_with(root).empty?
+          log "#{root}.xcodeproj still in use by #{targets_linking_with(root).inspect}"
+          next
+        end
+
+        # Remove this lib from the Libraries group
+        child = libraries_group.children.find { |c| c.path =~ /#{root}\.xcodeproj/ }
+        log "Removing #{root}.xcodeproj from Libraries group."
+        child.remove_from_project
       end
 
-      unless targets.select { |t| t.platform_name == :tvos }.empty?
-        log 'Libraries group still in use by tvOS targets. Not removing.'
+      unless library_roots.empty?
+        log 'Libraries group not empty. Not removing.'
         return
       end
 
