@@ -30,7 +30,7 @@ module Xcodeproj
             else
               root
             end
-          end
+          end + %w[Core CxxBridge DevSupport]
         end
       end
     end
