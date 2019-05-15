@@ -75,8 +75,8 @@ module ReactNativeUtil
 
       log "Removing Libraries from #{target.name}" unless to_remove.empty?
       to_remove.each do |f|
+        log " Removing #{f.file_ref.pretty_print}"
         target.frameworks_build_phase.remove_build_file f
-        log " Removed #{f.file_ref.pretty_print}"
       end
     end
 
