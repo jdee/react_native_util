@@ -25,7 +25,7 @@ end
 <% if app_target :tvos %>
 target '<%= app_target(:tvos).name %>' do
   platform :tvos, '<%= app_target(:tvos).deployment_target %>'
-<%= app_target(:tvos).podfile_excerpt commented_out: true %>
+<%= app_target(:tvos).podfile_excerpt %>
 end
 <% end %>
 
