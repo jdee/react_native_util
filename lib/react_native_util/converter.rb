@@ -300,7 +300,7 @@ module ReactNativeUtil
 
     def patch_react_podspec_for_tvos
       pattern = /RCTWebView/
-      return unless pattern.match_file? react_podspec_path
+      return unless pattern.match?(File.read(react_podspec_path))
 
       log 'Patching React.podspec for tvOS'
       PatternPatch::Patch.new(
