@@ -7,11 +7,10 @@ platform :ios, '<%= app_target.deployment_target %>'
 # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
 # use_frameworks!
 
-pod 'yoga', path: '../node_modules/react-native/ReactCommon/yoga'
-pod 'Folly', podspec: '../node_modules/react-native/third-party-podspecs/Folly.podspec'
-
 target '<%= app_target.name %>' do
 <%= app_target.podfile_excerpt %>
+  pod 'yoga', path: '../node_modules/react-native/ReactCommon/yoga'
+  pod 'Folly', podspec: '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
   # --- react-native link adds pods below this line. ---
 
@@ -20,6 +19,8 @@ end
 <% if test_target %>
 target '<%= test_target.name %>' do
 <%= test_target.podfile_excerpt %>
+  pod 'yoga', path: '../node_modules/react-native/ReactCommon/yoga'
+  pod 'Folly', podspec: '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 end
 <% end %>
 
