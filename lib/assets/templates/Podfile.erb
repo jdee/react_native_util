@@ -22,5 +22,14 @@ target '<%= test_target.name %>' do
 end
 <% end %>
 
-# The React pod in production as of 0.59.8 does not compile for tvOS.
-# Do not add tvOS targets to your Podfile.
+<% if app_target :tvos %>
+target '<%= app_target(:tvos).name %>' do
+<%= app_target(:tvos).podfile_excerpt %>
+end
+<% end %>
+
+<% if test_target :tvos %>
+target '<%= test_target(:tvos).name %>' do
+<%= test_target(:tvos).podfile_excerpt %>
+end
+<% end %>

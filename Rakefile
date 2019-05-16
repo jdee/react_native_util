@@ -51,7 +51,7 @@ require 'pattern_patch'
 include PatternPatch::Methods
 
 patch_config do |config|
-  config.patch_dir = File.expand_path 'lib/assets/patches', __dir__
+  config.patch_dir = File.expand_path 'assets/patches', __dir__
   config.trim_mode = '<>'
 end
 

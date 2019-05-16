@@ -78,8 +78,8 @@ module ReactNativeUtil
 
     # Remove the Libraries group from the xcodeproj in memory.
     def remove_libraries_group
-      # Remove links against these static libraries from iOS targets
-      targets.select { |t| t.platform_name == :ios }.each do |t|
+      # Remove links against these static libraries from all targets
+      targets.each do |t|
         remove_libraries_from_target t
       end
 
