@@ -107,8 +107,7 @@ module ReactNativeUtil
         run_command_with_spinner! 'react-native', 'link', dep, log: File.join(Dir.tmpdir, "react-native-link-#{dep}.log")
       end
 
-      log 'Patching React.podspec for tvOS'
-      patch_react_podspec
+      patch_react_podspec_for_tvos
 
       # 7. pod install
       # TODO: Can this be customized? Is this the only thing I have to look for
@@ -303,6 +302,7 @@ module ReactNativeUtil
       pattern = /RCTWebView/
       return unless pattern.match_file? react_podspec_path
 
+      log 'Patching React.podspec for tvOS'
       PatternPatch::Patch.new(
         regexp: pattern,
         text: 'RCTWKWebView',
