@@ -9,7 +9,7 @@ module Xcodeproj
         def podfile_excerpt(commented_out: false)
           text = ERB.new(File.read(PODFILE_TARGET_TEMPLATE_PATH), nil, '-').result binding
           text = text.split("\n").map { |line| "# #{line}" }.join("\n") if commented_out
-          text
+          "#{text}\n"
         end
 
         def subspecs_from_libraries
