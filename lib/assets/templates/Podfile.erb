@@ -22,16 +22,4 @@ target '<%= test_target.name %>' do
 end
 <% end %>
 
-<% if app_target :tvos %>
-target '<%= app_target(:tvos).name %>' do
-  platform :tvos, '<%= app_target(:tvos).deployment_target %>'
-<%= app_target(:tvos).podfile_excerpt %>
-end
-<% end %>
-
-<% if test_target :tvos %>
-target '<%= test_target(:tvos).name %>' do
-  platform :tvos, '<%= app_target(:tvos).deployment_target %>'
-<%= test_target(:tvos).podfile_excerpt %>
-end
-<% end %>
+# As of 0.59.8, the React pod does not compile for tvOS.
