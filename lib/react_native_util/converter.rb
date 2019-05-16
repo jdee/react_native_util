@@ -281,14 +281,18 @@ module ReactNativeUtil
     end
 
     def load_react_podspec!
-      podspec_dir = 'node_modules/react-native'
-      podspec_contents = File.read "#{podspec_dir}/React.podspec"
+      podspec_dir = File.dirname react_podspec_path
+      podspec_contents = File.read react_podspec_path
       podspec_contents.gsub!(/__dir__/, podspec_dir.inspect)
 
       require 'cocoapods-core'
       # rubocop: disable Security/Eval
       @react_podspec = eval(podspec_contents)
       # rubocop: enable Security/Eval
+    end
+
+    def react_podspec_path
+      File.expand_path 'node_modules/react-native/React.podspec'
     end
 
     # The name of the app as specified in package.json

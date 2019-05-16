@@ -6,8 +6,10 @@ module Xcodeproj
       class AbstractTarget
         PODFILE_TARGET_TEMPLATE_PATH = File.expand_path '../../assets/templates/Podfile-target.erb', __dir__
 
-        def podfile_excerpt
-          ERB.new(File.read(PODFILE_TARGET_TEMPLATE_PATH), nil, '-').result binding
+        def podfile_excerpt(commented_out: false)
+          text = ERB.new(File.read(PODFILE_TARGET_TEMPLATE_PATH), nil, '-').result binding
+          text = text.split("\n").map { |line| "# #{line}" }.join("\n") if commented_out
+          "#{text}\n"
         end
 
         def subspecs_from_libraries
@@ -18,11 +20,15 @@ module Xcodeproj
 
             # project is a ReactNativeUtil::Project
             # #static_libs is from the Libraries group
-            project.static_libs.include?(path)
+            project.static_libs(platform_name).include?(path)
           end
 
-          %w[Core CxxBridge DevSupport] + libs.map do |lib|
+          react_project_subspecs = %w[Core CxxBridge DevSupport]
+          react_project_subspecs << 'tvOS' if platform_name == :tvos
+
+          react_project_subspecs + libs.map do |lib|
             root = lib.file_ref.pretty_print.sub(/^lib(.*)\.a$/, '\1')
+            root.sub!(/-tvOS/, '')
 
             case root
             when 'RCTLinking'

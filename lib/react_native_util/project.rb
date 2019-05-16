@@ -49,19 +49,58 @@ module ReactNativeUtil
       self['Libraries']
     end
 
+    def targets_linking_with(root)
+      targets_matching do |r|
+        if root.respond_to?(:include?)
+          root.include? r
+        else
+          log "r = #{r}, root = #{root}"
+          r == root
+        end
+      end
+    end
+
+    def targets_matching(&block)
+      targets.reject do |target|
+        file_refs = target.frameworks_build_phase.files.map(&:file_ref).reject(&:nil?).map(&:pretty_print)
+
+        libs_from_libraries_group = file_refs.select do |lib|
+          lib = lib.sub(/-tvOS/, '')
+          matches = /^lib(.+)\.a$/.match lib
+          next false unless matches
+
+          yield matches[1]
+        end
+
+        libs_from_libraries_group.empty?
+      end
+    end
+
     # Remove the Libraries group from the xcodeproj in memory.
     def remove_libraries_group
-      # Remove links against these static libraries
+      # Remove links against these static libraries from all targets
       targets.each do |t|
         remove_libraries_from_target t
       end
 
-      unless (library_roots - DEFAULT_DEPENDENCIES).empty?
+      # Remove any unused projects from the Libraries group
+      library_roots.each do |root|
+        next unless targets_linking_with(root).empty?
+
+        # Remove this lib from the Libraries group. Nothing is linking against it
+        # anymore.
+        child = libraries_group.children.find { |c| c.path =~ /#{root}\.xcodeproj/ }
+        log "Removing #{root}.xcodeproj from Libraries group."
+        child.remove_from_project
+      end
+
+      # Remove the Libraries group if it's empty. Or report that it's not.
+      unless library_roots.empty?
         log 'Libraries group not empty. Not removing.'
         return
       end
 
-      log 'Removing Libraries group'
+      log 'Removing Libraries group.'
       libraries_group.remove_from_project
     end
 
@@ -70,6 +109,7 @@ module ReactNativeUtil
         path = file.file_ref.pretty_print
         next false unless /^lib(.+)\.a$/.match?(path)
 
+        path = path.sub(/-tvOS\.a$/, '.a')
         static_libs.include?(path)
       end
 
@@ -152,8 +192,15 @@ module ReactNativeUtil
 
     # All static libraries from the Libraries group
     # @return [Array<String>] an array of filenames
-    def static_libs
-      library_roots.map { |root| "lib#{root}.a" }
+    def static_libs(platform = :ios)
+      library_roots.map do |root|
+        case platform
+        when :tvos
+          "lib#{root}-tvOS.a"
+        else
+          "lib#{root}.a"
+        end
+      end
     end
 
     # Returns the original Start Packager build phase (from the React.xcodeproj
