@@ -61,7 +61,7 @@ module ReactNativeUtil
 
     def targets_matching(&block)
       targets.reject do |target|
-        libs_from_libraries_group = target.frameworks_build_phase.files.map(&:file_ref).map(&:pretty_print).map do |lib|
+        libs_from_libraries_group = target.frameworks_build_phase.files.map(&:file_ref).map(&:pretty_print).select do |lib|
           matches = /^lib(.+)(-tvOS)?\.a$/.match lib
           next false unless matches
 
@@ -104,11 +104,7 @@ module ReactNativeUtil
         path = file.file_ref.pretty_print
         next false unless /^lib(.+)\.a$/.match?(path)
 
-        if target.platform_name == :tvos
-          path = path.sub(/-tvOS\.a$/, '.a')
-        end
-
-        static_libs.include?(path)
+        static_libs(target.platform_name).include?(path)
       end
 
       log "Removing Libraries from #{target.name}" unless to_remove.empty?
