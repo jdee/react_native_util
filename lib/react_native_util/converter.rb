@@ -1,7 +1,6 @@
 require 'cocoapods-core'
 require 'erb'
 require 'json'
-require 'pattern_patch'
 require 'rubygems'
 require_relative 'metadata'
 require_relative 'project'
@@ -106,8 +105,6 @@ module ReactNativeUtil
       deps_to_add.each do |dep|
         run_command_with_spinner! 'react-native', 'link', dep, log: File.join(Dir.tmpdir, "react-native-link-#{dep}.log")
       end
-
-      patch_react_podspec_for_tvos
 
       # 7. pod install
       # TODO: Can this be customized? Is this the only thing I have to look for
@@ -296,19 +293,6 @@ module ReactNativeUtil
 
     def react_podspec_path
       File.expand_path 'node_modules/react-native/React.podspec'
-    end
-
-    def patch_react_podspec_for_tvos
-      return if /RCTWKWebView/.match?(File.read(react_podspec_path))
-
-      log 'Patching React.podspec for tvOS'
-      # Insert after the first (and only) place RCTWebView*" occurs at the end
-      # of a line after ss.tvos.exclude_files.
-      PatternPatch::Patch.new(
-        regexp: /ss.tvos.exclude_files.*RCTWebView\*"\s*$/m,
-        text: %{,\n                              "React/Views/RCTWKWebView*"},
-        mode: :append
-      ).apply react_podspec_path
     end
 
     # The name of the app as specified in package.json
