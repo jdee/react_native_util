@@ -61,7 +61,7 @@ module ReactNativeUtil
 
     def targets_matching(&block)
       targets.reject do |target|
-        libs_from_libraries_group = target.frameworks_build_phase.files.map(&:file_ref).map(&:pretty_print).select do |lib|
+        libs_from_libraries_group = target.frameworks_build_phase.files.map(&:file_ref).reject(&:nil?).map(&:pretty_print).select do |lib|
           matches = /^lib(.+)(-tvOS)?\.a$/.match lib
           next false unless matches
 
