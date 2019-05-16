@@ -295,7 +295,7 @@ module ReactNativeUtil
     end
 
     def react_podspec_path
-      File.expand_path 'node_modules/react-native/React.podspec', __dir__
+      File.expand_path 'node_modules/react-native/React.podspec'
     end
 
     def patch_react_podspec_for_tvos
