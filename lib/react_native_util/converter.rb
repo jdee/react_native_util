@@ -299,14 +299,13 @@ module ReactNativeUtil
     end
 
     def patch_react_podspec_for_tvos
-      pattern = /RCTWebView/
-      return unless pattern.match?(File.read(react_podspec_path))
+      return unless /RCTWKWebView/.match?(File.read(react_podspec_path))
 
       log 'Patching React.podspec for tvOS'
       PatternPatch::Patch.new(
-        regexp: pattern,
-        text: 'RCTWKWebView',
-        mode: :replace
+        regexp: /RCTWebView\*"\s*$/,
+        text: ',\n                              "React/Views/RCTWKWebView*"',
+        mode: :append
       ).apply react_podspec_path
     end
 
