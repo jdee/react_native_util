@@ -306,7 +306,7 @@ module ReactNativeUtil
       # of a line after ss.tvos.exclude_files.
       PatternPatch::Patch.new(
         regexp: /ss.tvos.exclude_files.*RCTWebView\*"\s*$/m,
-        text: ',\n                              "React/Views/RCTWKWebView*"',
+        text: %{,\n                              "React/Views/RCTWKWebView*"},
         mode: :append
       ).apply react_podspec_path
     end
