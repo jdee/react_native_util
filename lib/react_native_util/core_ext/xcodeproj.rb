@@ -6,8 +6,10 @@ module Xcodeproj
       class AbstractTarget
         PODFILE_TARGET_TEMPLATE_PATH = File.expand_path '../../assets/templates/Podfile-target.erb', __dir__
 
-        def podfile_excerpt
-          ERB.new(File.read(PODFILE_TARGET_TEMPLATE_PATH), nil, '-').result binding
+        def podfile_excerpt(commented_out: false)
+          text = ERB.new(File.read(PODFILE_TARGET_TEMPLATE_PATH), nil, '-').result binding
+          text = text.split("\n").map { |line| "# #{line}" }.join("\n") if commented_out
+          text
         end
 
         def subspecs_from_libraries
