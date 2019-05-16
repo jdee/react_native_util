@@ -54,6 +54,7 @@ module ReactNativeUtil
         if root.respond_to?(:include?)
           root.include? r
         else
+          log "r = #{r}, root = #{root}"
           r == root
         end
       end
